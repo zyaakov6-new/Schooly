@@ -1,0 +1,62 @@
+# Flutter
+.dart_tool/
+.flutter-plugins
+.flutter-plugins-dependencies
+.packages
+.pub-cache/
+.pub/
+build/
+*.iml
+
+# Android
+android/local.properties
+android/.gradle
+android/captures/
+android/gradlew
+android/gradlew.bat
+android/gradle/
+android/key.properties
+android/**/*.keystore
+android/**/*.jks
+android/app/google-services.json
+
+# iOS
+ios/.symlinks/
+ios/Flutter/App.framework
+ios/Flutter/Flutter.framework
+ios/Flutter/Flutter.podspec
+ios/Flutter/Generated.xcconfig
+ios/Flutter/ephemeral/
+ios/Pods/
+ios/.DS_Store
+ios/Runner/GoogleService-Info.plist
+
+# VS Code
+.vscode/
+
+# IntelliJ
+*.iml
+*.ipr
+*.iws
+.idea/
+
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# Env files
+.env
+.env.*
+*.env
+
+# Firebase config (add your own)
+# google-services.json is gitignored above
+# GoogleService-Info.plist is gitignored above
+
+# Generated files
+lib/**/*.g.dart
+lib/**/*.freezed.dart
+
+# Coverage
+coverage/
