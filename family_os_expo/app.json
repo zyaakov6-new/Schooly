@@ -1,0 +1,71 @@
+{
+  "expo": {
+    "name": "FamilyOS",
+    "slug": "family-os",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/icon.png",
+    "userInterfaceStyle": "automatic",
+    "splash": {
+      "backgroundColor": "#0D1117"
+    },
+    "assetBundlePatterns": ["**/*"],
+    "ios": {
+      "supportsTablet": false,
+      "bundleIdentifier": "com.yourcompany.familyos",
+      "infoPlist": {
+        "NSCameraUsageDescription": "FamilyOS uses your camera to take child profile photos.",
+        "NSPhotoLibraryUsageDescription": "FamilyOS accesses your photos to set child profile pictures.",
+        "CFBundleURLTypes": [
+          {
+            "CFBundleURLSchemes": ["familyos"]
+          }
+        ]
+      }
+    },
+    "android": {
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/adaptive-icon.png",
+        "backgroundColor": "#0D1117"
+      },
+      "package": "com.yourcompany.familyos",
+      "permissions": [
+        "CAMERA",
+        "READ_EXTERNAL_STORAGE",
+        "WRITE_EXTERNAL_STORAGE",
+        "RECEIVE_BOOT_COMPLETED",
+        "VIBRATE",
+        "POST_NOTIFICATIONS"
+      ],
+      "intentFilters": [
+        {
+          "action": "VIEW",
+          "autoVerify": true,
+          "data": [{ "scheme": "familyos", "host": "join" }],
+          "category": ["BROWSABLE", "DEFAULT"]
+        }
+      ]
+    },
+    "plugins": [
+      "expo-router",
+      "expo-font",
+      [
+        "expo-notifications",
+        {
+          "icon": "./assets/notification-icon.png",
+          "color": "#1976D2"
+        }
+      ],
+      [
+        "expo-image-picker",
+        {
+          "photosPermission": "FamilyOS accesses your photos to set child profile pictures."
+        }
+      ]
+    ],
+    "scheme": "familyos",
+    "experiments": {
+      "typedRoutes": true
+    }
+  }
+}
