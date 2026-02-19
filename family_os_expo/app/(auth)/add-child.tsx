@@ -29,7 +29,7 @@ export default function AddChildScreen() {
 
   const save = async () => {
     if (name.trim().length < 2 || !school.trim() || !cls.trim()) {
-      Alert.alert('Fill in all fields'); return;
+      Alert.alert('יש למלא את כל השדות'); return;
     }
     setLoading(true);
     try {
@@ -41,7 +41,7 @@ export default function AddChildScreen() {
       if (first === 'true') router.replace('/(app)');
       else router.back();
     } catch (e: any) {
-      Alert.alert('Error', e.message);
+      Alert.alert('שגיאה', e.message);
     } finally { setLoading(false); }
   };
 
@@ -49,12 +49,12 @@ export default function AddChildScreen() {
     <ScrollView style={{ flex: 1, backgroundColor: bg }} contentContainerStyle={styles.container} keyboardShouldPersistTaps="handled">
       {first !== 'true' && (
         <Pressable onPress={() => router.back()} style={styles.back}>
-          <Text style={[styles.backTxt, { color: txt }]}>← Back</Text>
+          <Text style={[styles.backTxt, { color: txt }]}>→ חזור</Text>
         </Pressable>
       )}
 
       <Text style={[styles.h1, { color: txt }]}>
-        {first === 'true' ? 'Add your first child 👶' : 'Add child'}
+        {first === 'true' ? 'הוסף את ילדך הראשון 👶' : 'הוסף ילד'}
       </Text>
 
       {/* Avatar Preview */}
@@ -82,20 +82,21 @@ export default function AddChildScreen() {
 
       {/* Fields */}
       {[
-        { placeholder: "Child's name", value: name, set: setName, cap: 'words' },
-        { placeholder: 'School name', value: school, set: setSchool, cap: 'words' },
-        { placeholder: 'Class / Grade (e.g. 3B)', value: cls, set: setCls, cap: 'characters' },
+        { placeholder: 'שם הילד', value: name, set: setName, cap: 'words' },
+        { placeholder: 'שם בית הספר', value: school, set: setSchool, cap: 'words' },
+        { placeholder: 'כיתה (למשל: ג׳2)', value: cls, set: setCls, cap: 'characters' },
       ].map(f => (
         <TextInput
           key={f.placeholder} value={f.value} onChangeText={f.set}
           placeholder={f.placeholder} placeholderTextColor={Colors.lightMuted}
           autoCapitalize={f.cap as any}
+          textAlign="right"
           style={[styles.input, { backgroundColor: cardBg, color: txt }]}
         />
       ))}
 
       {/* Age stepper — no native dependencies */}
-      <Text style={[styles.label, { color: txt }]}>Age: {age} years</Text>
+      <Text style={[styles.label, { color: txt }]}>גיל: {age} שנים</Text>
       <View style={[styles.stepper, { marginBottom: Spacing.xl }]}>
         <Pressable
           onPress={() => setAge(a => Math.max(3, a - 1))}
@@ -115,12 +116,12 @@ export default function AddChildScreen() {
       </View>
 
       <Pressable onPress={save} disabled={loading} style={[styles.btn, loading && { opacity: 0.6 }]}>
-        <Text style={styles.btnText}>{loading ? 'Saving…' : 'Add child'}</Text>
+        <Text style={styles.btnText}>{loading ? 'שומר…' : 'הוסף ילד'}</Text>
       </Pressable>
 
       {first === 'true' && (
         <Pressable onPress={() => router.replace('/(app)')} style={{ marginTop: Spacing.lg }}>
-          <Text style={[styles.link, { textAlign: 'center' }]}>Skip for now →</Text>
+          <Text style={[styles.link, { textAlign: 'center' }]}>← דלג בינתיים</Text>
         </Pressable>
       )}
     </ScrollView>

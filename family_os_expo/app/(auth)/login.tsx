@@ -16,7 +16,7 @@ export default function LoginScreen() {
 
   const login = async () => {
     if (!email.includes('@') || password.length < 6) {
-      Alert.alert('Invalid input', 'Enter a valid email and password (min 6 chars)');
+      Alert.alert('קלט שגוי', 'יש להזין כתובת מייל וסיסמה תקינים (לפחות 6 תווים)');
       return;
     }
     setLoading(true);
@@ -24,7 +24,7 @@ export default function LoginScreen() {
       await firebaseService.login(email.trim(), password);
       // _layout.tsx will handle the redirect
     } catch (e: any) {
-      Alert.alert('Sign in failed', e.message);
+      Alert.alert('הכניסה נכשלה', e.message);
     } finally {
       setLoading(false);
     }
@@ -38,21 +38,23 @@ export default function LoginScreen() {
     <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : undefined} style={{ flex: 1, backgroundColor: bg }}>
       <ScrollView contentContainerStyle={[styles.container, { backgroundColor: bg }]} keyboardShouldPersistTaps="handled">
         <Text style={styles.hero}>👋</Text>
-        <Text style={[styles.h1, { color: txt }]}>Welcome back</Text>
-        <Text style={[styles.sub, { color: Colors.lightMuted }]}>Sign in to your family account</Text>
+        <Text style={[styles.h1, { color: txt }]}>ברוך שובך</Text>
+        <Text style={[styles.sub, { color: Colors.lightMuted }]}>כניסה לחשבון המשפחה</Text>
 
         <View style={styles.form}>
           <TextInput
             value={email} onChangeText={setEmail}
-            placeholder="Email" placeholderTextColor={Colors.lightMuted}
+            placeholder="דואר אלקטרוני" placeholderTextColor={Colors.lightMuted}
             keyboardType="email-address" autoCapitalize="none" returnKeyType="next"
+            textAlign="right"
             style={[styles.input, { backgroundColor: cardBg, color: txt }]}
           />
           <View style={styles.pwWrap}>
             <TextInput
               value={password} onChangeText={setPassword}
-              placeholder="Password" placeholderTextColor={Colors.lightMuted}
+              placeholder="סיסמה" placeholderTextColor={Colors.lightMuted}
               secureTextEntry={!showPw} returnKeyType="done" onSubmitEditing={login}
+              textAlign="right"
               style={[styles.input, { backgroundColor: cardBg, color: txt, flex: 1 }]}
             />
             <Pressable onPress={() => setShowPw(v => !v)} style={styles.eyeBtn}>
@@ -61,18 +63,18 @@ export default function LoginScreen() {
           </View>
 
           <Pressable onPress={login} disabled={loading} style={[styles.btn, loading && { opacity: 0.6 }]}>
-            <Text style={styles.btnText}>{loading ? 'Signing in…' : 'Sign In'}</Text>
+            <Text style={styles.btnText}>{loading ? 'מתחבר…' : 'כניסה'}</Text>
           </Pressable>
 
           <Pressable onPress={() => firebaseService.resetPassword(email.trim())}>
-            <Text style={[styles.link, { textAlign: 'right' }]}>Forgot password?</Text>
+            <Text style={styles.link}>שכחת סיסמה?</Text>
           </Pressable>
         </View>
 
         <View style={styles.footer}>
-          <Text style={{ color: Colors.lightMuted }}>New to FamilyOS? </Text>
+          <Text style={{ color: Colors.lightMuted }}>חדש ב-FamilyOS? </Text>
           <Pressable onPress={() => router.push('/(auth)/register')}>
-            <Text style={styles.link}>Create account</Text>
+            <Text style={styles.link}>יצירת חשבון</Text>
           </Pressable>
         </View>
       </ScrollView>

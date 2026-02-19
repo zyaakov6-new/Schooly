@@ -24,17 +24,17 @@ export default function AppLayout() {
         tabBarInactiveTintColor: dark ? Colors.darkMuted : Colors.lightMuted,
         tabBarLabel: (() => {
           const labels: Record<string, string> = {
-            index: 'Home', calendar: 'Calendar', tasks: 'Tasks', kids: 'Kids', profile: 'Profile',
+            index: 'בית', calendar: 'יומן', tasks: 'משימות', kids: 'ילדים', profile: 'פרופיל',
           };
           return labels[route.name] ?? route.name;
         })(),
       })}
     >
-      <Tabs.Screen name="index"    options={{ title: 'Home' }} />
-      <Tabs.Screen name="calendar" options={{ title: 'Calendar' }} />
-      <Tabs.Screen name="tasks"    options={{ title: 'Tasks' }} />
-      <Tabs.Screen name="kids"     options={{ title: 'Kids' }} />
-      <Tabs.Screen name="profile"  options={{ title: 'Profile' }} />
+      <Tabs.Screen name="index"    options={{ title: 'בית' }} />
+      <Tabs.Screen name="calendar" options={{ title: 'יומן' }} />
+      <Tabs.Screen name="tasks"    options={{ title: 'משימות' }} />
+      <Tabs.Screen name="kids"     options={{ title: 'ילדים' }} />
+      <Tabs.Screen name="profile"  options={{ title: 'פרופיל' }} />
       {/* Modal screens — hidden from tab bar */}
       <Tabs.Screen name="add-event" options={{ href: null }} />
       <Tabs.Screen name="add-task"  options={{ href: null }} />

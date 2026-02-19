@@ -55,8 +55,8 @@ export function DateInput({ value, onChange, mode = 'date', label }: Props) {
   };
 
   // Friendly display
-  const displayDate = value.toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' });
-  const displayTime = value.toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit' });
+  const displayDate = value.toLocaleDateString('he-IL', { day: '2-digit', month: 'short', year: 'numeric' });
+  const displayTime = value.toLocaleTimeString('he-IL', { hour: '2-digit', minute: '2-digit' });
   const display =
     mode === 'date'     ? displayDate :
     mode === 'time'     ? displayTime :
@@ -74,28 +74,28 @@ export function DateInput({ value, onChange, mode = 'date', label }: Props) {
         <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : undefined}>
           <View style={[styles.sheet, { backgroundColor: sheet }]}>
             <View style={[styles.handle, { backgroundColor: muted }]} />
-            <Text style={[styles.sheetTitle, { color: txt }]}>{label ?? (mode === 'time' ? 'Set time' : 'Set date')}</Text>
+            <Text style={[styles.sheetTitle, { color: txt }]}>{label ?? (mode === 'time' ? 'הגדר שעה' : 'הגדר תאריך')}</Text>
 
             {(mode === 'date' || mode === 'datetime') && (
               <View style={styles.row}>
-                <Field label="Day"   value={day}   onChange={setDay}   max={2} hint="DD" txt={txt} muted={muted} border={border} bg={bg} />
+                <Field label="יום"   value={day}   onChange={setDay}   max={2} hint="יי" txt={txt} muted={muted} border={border} bg={bg} />
                 <Separator txt={muted} />
-                <Field label="Month" value={month} onChange={setMonth} max={2} hint="MM" txt={txt} muted={muted} border={border} bg={bg} />
+                <Field label="חודש" value={month} onChange={setMonth} max={2} hint="חח" txt={txt} muted={muted} border={border} bg={bg} />
                 <Separator txt={muted} />
-                <Field label="Year"  value={year}  onChange={setYear}  max={4} hint="YYYY" txt={txt} muted={muted} border={border} bg={bg} flex={2} />
+                <Field label="שנה"  value={year}  onChange={setYear}  max={4} hint="שנה" txt={txt} muted={muted} border={border} bg={bg} flex={2} />
               </View>
             )}
 
             {(mode === 'time' || mode === 'datetime') && (
               <View style={[styles.row, mode === 'datetime' && { marginTop: 8 }]}>
-                <Field label="Hour" value={hour} onChange={setHour} max={2} hint="HH" txt={txt} muted={muted} border={border} bg={bg} />
+                <Field label="שעה" value={hour} onChange={setHour} max={2} hint="שש" txt={txt} muted={muted} border={border} bg={bg} />
                 <Separator txt={muted} char=":" />
-                <Field label="Min"  value={minute} onChange={setMinute} max={2} hint="MM" txt={txt} muted={muted} border={border} bg={bg} />
+                <Field label="דק'"  value={minute} onChange={setMinute} max={2} hint="דד" txt={txt} muted={muted} border={border} bg={bg} />
               </View>
             )}
 
             <Pressable onPress={confirm} style={styles.confirmBtn}>
-              <Text style={styles.confirmTxt}>Confirm</Text>
+              <Text style={styles.confirmTxt}>אישור</Text>
             </Pressable>
           </View>
         </KeyboardAvoidingView>

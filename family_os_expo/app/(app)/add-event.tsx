@@ -40,8 +40,8 @@ export default function AddEventScreen() {
   const [saving, setSaving]       = useState(false);
 
   const save = async () => {
-    if (!title.trim()) { Alert.alert('Missing title', 'Please enter an event title.'); return; }
-    if (!familyId)     { Alert.alert('Error', 'No family found.'); return; }
+    if (!title.trim()) { Alert.alert('כותרת חסרה', 'אנא הזן כותרת לאירוע.'); return; }
+    if (!familyId)     { Alert.alert('שגיאה', 'לא נמצאה משפחה.'); return; }
     setSaving(true);
     try {
       await firebaseService.addEvent(familyId, {
@@ -59,7 +59,7 @@ export default function AddEventScreen() {
       });
       router.back();
     } catch (e: any) {
-      Alert.alert('Error', e.message ?? 'Failed to save event.');
+      Alert.alert('שגיאה', e.message ?? 'שמירת האירוע נכשלה.');
     } finally {
       setSaving(false);
     }
@@ -71,12 +71,12 @@ export default function AddEventScreen() {
         {/* Header */}
         <View style={styles.header}>
           <Pressable onPress={() => router.back()}>
-            <Text style={{ color: Colors.accent, fontSize: FontSize.base }}>Cancel</Text>
+            <Text style={{ color: Colors.accent, fontSize: FontSize.base }}>ביטול</Text>
           </Pressable>
-          <Text style={[styles.headerTitle, { color: txt }]}>New Event</Text>
+          <Text style={[styles.headerTitle, { color: txt }]}>אירוע חדש</Text>
           <Pressable onPress={save} disabled={saving}>
             <Text style={{ color: saving ? muted : Colors.accent, fontWeight: '700', fontSize: FontSize.base }}>
-              {saving ? 'Saving…' : 'Save'}
+              {saving ? 'שומר…' : 'שמור'}
             </Text>
           </Pressable>
         </View>
@@ -85,7 +85,7 @@ export default function AddEventScreen() {
         <View style={[styles.card, { backgroundColor: cardBg }]}>
           <TextInput
             style={[styles.titleInput, { color: txt }]}
-            placeholder="Event title"
+            placeholder="כותרת האירוע"
             placeholderTextColor={muted}
             value={title}
             onChangeText={setTitle}
@@ -95,7 +95,7 @@ export default function AddEventScreen() {
         </View>
 
         {/* Type picker */}
-        <SectionLabel label="TYPE" muted={muted} />
+        <SectionLabel label="סוג" muted={muted} />
         <ScrollView horizontal showsHorizontalScrollIndicator={false}
           style={{ marginHorizontal: Spacing.lg, marginBottom: Spacing.md }}>
           <View style={{ flexDirection: 'row', gap: 8 }}>
@@ -118,12 +118,12 @@ export default function AddEventScreen() {
         </ScrollView>
 
         {/* Date & Time */}
-        <SectionLabel label="START" muted={muted} />
+        <SectionLabel label="התחלה" muted={muted} />
         <View style={{ marginHorizontal: Spacing.lg, marginBottom: Spacing.md }}>
-          <DateInput value={startDate} onChange={setStartDate} mode="datetime" label="Start date & time" />
+          <DateInput value={startDate} onChange={setStartDate} mode="datetime" label="תאריך ושעת התחלה" />
         </View>
 
-        <SectionLabel label="END TIME (OPTIONAL)" muted={muted} />
+        <SectionLabel label="זמן סיום (אופציונלי)" muted={muted} />
         <View style={{ marginHorizontal: Spacing.lg, marginBottom: Spacing.md, flexDirection: 'row', gap: 8 }}>
           <Pressable
             onPress={() => setHasEnd(v => !v)}
@@ -133,20 +133,20 @@ export default function AddEventScreen() {
             ]}
           >
             <Text style={{ color: hasEnd ? Colors.accent : muted, fontWeight: '600' }}>
-              {hasEnd ? '✓ Has end time' : 'No end time'}
+              {hasEnd ? '✓ יש זמן סיום' : 'ללא זמן סיום'}
             </Text>
           </Pressable>
         </View>
         {hasEnd && (
           <View style={{ marginHorizontal: Spacing.lg, marginBottom: Spacing.md }}>
-            <DateInput value={endDate} onChange={setEndDate} mode="time" label="End time" />
+            <DateInput value={endDate} onChange={setEndDate} mode="time" label="שעת סיום" />
           </View>
         )}
 
         {/* Child */}
         {children.length > 0 && (
           <>
-            <SectionLabel label="CHILD" muted={muted} />
+            <SectionLabel label="ילד" muted={muted} />
             <ScrollView horizontal showsHorizontalScrollIndicator={false}
               style={{ marginHorizontal: Spacing.lg, marginBottom: Spacing.md }}>
               <View style={{ flexDirection: 'row', gap: 8 }}>
@@ -154,7 +154,7 @@ export default function AddEventScreen() {
                   onPress={() => setChildId(undefined)}
                   style={[styles.childChip, !childId && styles.childChipActive, { borderColor: border }]}
                 >
-                  <Text style={[styles.childChipTxt, { color: !childId ? Colors.accent : muted }]}>All</Text>
+                  <Text style={[styles.childChipTxt, { color: !childId ? Colors.accent : muted }]}>הכל</Text>
                 </Pressable>
                 {children.map(c => (
                   <Pressable
@@ -177,36 +177,39 @@ export default function AddEventScreen() {
         )}
 
         {/* Details */}
-        <SectionLabel label="DETAILS" muted={muted} />
+        <SectionLabel label="פרטים" muted={muted} />
         <View style={[styles.card, { backgroundColor: cardBg }]}>
           <TextInput
             style={[styles.fieldInput, { color: txt, borderBottomColor: border }]}
-            placeholder="📍 Location (optional)"
+            placeholder="📍 מיקום (אופציונלי)"
             placeholderTextColor={muted}
             value={location}
             onChangeText={setLocation}
             returnKeyType="next"
+            textAlign="right"
           />
           {(type === 'payment' || type === 'trip') && (
             <TextInput
               style={[styles.fieldInput, { color: txt, borderBottomColor: border }]}
-              placeholder="💰 Amount in ₪ (optional)"
+              placeholder="💰 סכום בש״ח (אופציונלי)"
               placeholderTextColor={muted}
               value={amount}
               onChangeText={setAmount}
               keyboardType="decimal-pad"
               returnKeyType="next"
+              textAlign="right"
             />
           )}
           <TextInput
             style={[styles.fieldInput, styles.notesInput, { color: txt }]}
-            placeholder="📝 Notes (optional)"
+            placeholder="📝 הערות (אופציונלי)"
             placeholderTextColor={muted}
             value={notes}
             onChangeText={setNotes}
             multiline
             numberOfLines={3}
             textAlignVertical="top"
+            textAlign="right"
           />
         </View>
       </ScrollView>

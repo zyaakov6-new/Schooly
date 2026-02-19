@@ -17,15 +17,15 @@ export default function KidsScreen() {
   const shareInvite = async () => {
     if (!family?.inviteCode) return;
     await Share.share({
-      message: `Join our family on FamilyOS! Use invite code: ${family.inviteCode}`,
-      title: 'FamilyOS Invite',
+      message: `הצטרף למשפחה שלנו ב-FamilyOS! השתמש בקוד ההזמנה: ${family.inviteCode}`,
+      title: 'הזמנה ל-FamilyOS',
     });
   };
 
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: bg }}>
       <View style={styles.header}>
-        <Text style={[styles.title, { color: txt }]}>My Kids</Text>
+        <Text style={[styles.title, { color: txt }]}>הילדים שלי</Text>
         <Pressable onPress={shareInvite} style={styles.inviteBtn}>
           <Text style={{ fontSize: 18 }}>👥</Text>
         </Pressable>
@@ -33,9 +33,9 @@ export default function KidsScreen() {
 
       {children.length === 0 ? (
         <EmptyState
-          emoji="👶" title="No children yet"
-          subtitle="Add your first child and start managing their schedule"
-          actionLabel="Add child" onAction={() => router.push('/(auth)/add-child')}
+          emoji="👶" title="אין ילדים עדיין"
+          subtitle="הוסף את ילדך הראשון והתחל לנהל את הלוח שלו"
+          actionLabel="הוסף ילד" onAction={() => router.push('/(auth)/add-child')}
         />
       ) : (
         <FlatList
@@ -59,7 +59,7 @@ export default function KidsScreen() {
                 </View>
                 <View style={{ flex: 1 }}>
                   <Text style={[styles.name, { color: txt }]}>{item.name}</Text>
-                  <Text style={styles.sub}>{item.age} yrs · {item.school} · {item.className}</Text>
+                  <Text style={styles.sub}>{item.age} שנים · {item.school} · {item.className}</Text>
                 </View>
                 <Text style={[styles.chevron, { color: dark ? Colors.darkMuted : Colors.lightMuted }]}>›</Text>
               </Pressable>
@@ -69,7 +69,7 @@ export default function KidsScreen() {
       )}
 
       <Pressable onPress={() => router.push('/(auth)/add-child')} style={styles.fab}>
-        <Text style={styles.fabTxt}>＋ Add child</Text>
+        <Text style={styles.fabTxt}>＋ הוסף ילד</Text>
       </Pressable>
     </SafeAreaView>
   );

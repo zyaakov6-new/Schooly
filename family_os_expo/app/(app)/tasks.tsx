@@ -9,10 +9,10 @@ import { hexToRgba } from '../../utils/helpers';
 import TaskTile from '../../components/TaskTile';
 import EmptyState from '../../components/EmptyState';
 
-const TABS: { key: TaskStatus | 'all'; label: string }[] = [
-  { key: 'pending',    label: 'Pending' },
-  { key: 'inProgress', label: 'In Progress' },
-  { key: 'done',       label: 'Done' },
+const TABS: { key: TaskStatus | 'all'; label: string; emptyTitle: string }[] = [
+  { key: 'pending',    label: 'ממתין',   emptyTitle: 'אין משימות ממתינות' },
+  { key: 'inProgress', label: 'בביצוע',  emptyTitle: 'אין משימות בביצוע' },
+  { key: 'done',       label: 'בוצע',    emptyTitle: 'אין משימות שבוצעו' },
 ];
 
 export default function TasksScreen() {
@@ -34,13 +34,13 @@ export default function TasksScreen() {
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: bg }}>
       <View style={styles.header}>
-        <Text style={[styles.title, { color: txt }]}>Tasks</Text>
+        <Text style={[styles.title, { color: txt }]}>משימות</Text>
         <View style={styles.headerRight}>
           <Pressable onPress={() => router.push('/(app)/inbox')} style={styles.inboxBtn}>
             <Text style={{ fontSize: 20 }}>📨</Text>
           </Pressable>
           <Pressable onPress={() => router.push('/(app)/add-task')} style={styles.addBtn}>
-            <Text style={styles.addBtnTxt}>+ Task</Text>
+            <Text style={styles.addBtnTxt}>+ משימה</Text>
           </Pressable>
         </View>
       </View>
@@ -55,7 +55,7 @@ export default function TasksScreen() {
           renderItem={({ item }) => item === null ? (
             <Pressable onPress={() => setFilter(null)}
               style={[styles.chip, { backgroundColor: !filterChild ? Colors.accent : Colors.accent + '22' }]}>
-              <Text style={[styles.chipTxt, { color: !filterChild ? '#fff' : Colors.accent }]}>All</Text>
+              <Text style={[styles.chipTxt, { color: !filterChild ? '#fff' : Colors.accent }]}>הכל</Text>
             </Pressable>
           ) : (
             <Pressable onPress={() => setFilter(filterChild === item.id ? null : item.id)}
@@ -80,8 +80,8 @@ export default function TasksScreen() {
       {filtered.length === 0 ? (
         <EmptyState
           emoji={tab === 'done' ? '🎉' : '✅'}
-          title={`No ${TABS.find(t => t.key === tab)?.label.toLowerCase()} tasks`}
-          subtitle={tab === 'pending' ? 'Tap + Task to add one' : ''}
+          title={TABS.find(t => t.key === tab)?.emptyTitle ?? ''}
+          subtitle={tab === 'pending' ? 'לחץ + משימה להוספה' : ''}
         />
       ) : (
         <FlatList

@@ -2,8 +2,12 @@ import { useEffect } from 'react';
 import { Stack, router } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
-import { useColorScheme } from 'react-native';
+import { useColorScheme, I18nManager } from 'react-native';
 import * as SplashScreen from 'expo-splash-screen';
+
+// Force RTL layout for Hebrew
+I18nManager.allowRTL(true);
+I18nManager.forceRTL(true);
 import { useFonts, Inter_400Regular, Inter_500Medium, Inter_600SemiBold, Inter_700Bold } from '@expo-google-fonts/inter';
 import { firebaseService } from '../services/firebaseService';
 import { useAppStore, useFamilyStore, useChildrenStore, useEventsStore, useTasksStore } from '../store';

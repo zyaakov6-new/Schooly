@@ -12,9 +12,9 @@ import { Colors, FontSize, Spacing } from '../utils/theme';
 const { width } = Dimensions.get('window');
 
 const PAGES = [
-  { emoji: '👨‍👩‍👧‍👦', title: 'One app.\nAll kids.\nZero chaos.', sub: 'Replace WhatsApp chaos, paper notes, and 5 different apps with one beautiful dashboard.', color: Colors.accent },
-  { emoji: '📅', title: 'See everything\nin one glance.', sub: 'School schedules, tests, activities, and payments — visible at a glance for every child.', color: '#10B981' },
-  { emoji: '✅', title: 'Swipe done.\nBreathe easy.', sub: 'Swipe right to complete tasks. Smart inbox parses teacher messages into events automatically.', color: '#8B5CF6' },
+  { emoji: '👨‍👩‍👧‍👦', title: 'אפליקציה אחת.\nכל הילדים.\nאפס כאוס.', sub: 'החלף את הכאוס בוואטסאפ, פתקים ו-5 אפליקציות שונות — בדשבורד אחד יפה.', color: Colors.accent },
+  { emoji: '📅', title: 'הכל במבט\nאחד.', sub: 'לוחות זמנים, מבחנים, פעילויות ותשלומים — גלויים בבת אחת לכל ילד.', color: '#10B981' },
+  { emoji: '✅', title: 'החלק לסיום.\nנשום בקלות.', sub: 'החלק ימינה להשלמת משימות. תיבת הדואר החכמה מזהה תאריכים ואירועים מהודעות המורים.', color: '#8B5CF6' },
 ];
 
 export default function OnboardingScreen() {
@@ -41,7 +41,7 @@ export default function OnboardingScreen() {
     <LinearGradient colors={['#0D1117', '#161B22']} style={styles.root}>
       {/* Skip */}
       <Pressable onPress={finish} style={styles.skip}>
-        <Text style={styles.skipText}>Skip</Text>
+        <Text style={styles.skipText}>דלג</Text>
       </Pressable>
 
       <FlatList
@@ -74,7 +74,7 @@ export default function OnboardingScreen() {
 
       {/* CTA */}
       <Pressable onPress={next} style={[styles.cta, { backgroundColor: page.color }]}>
-        <Text style={styles.ctaText}>{index < PAGES.length - 1 ? 'Next →' : 'Get Started'}</Text>
+        <Text style={styles.ctaText}>{index < PAGES.length - 1 ? '← הבא' : 'בואו נתחיל'}</Text>
       </Pressable>
     </LinearGradient>
   );

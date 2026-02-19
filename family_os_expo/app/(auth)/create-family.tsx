@@ -21,28 +21,28 @@ export default function CreateFamilyScreen() {
   const [loading, setLoading] = useState(false);
 
   const create = async () => {
-    if (familyName.trim().length < 2) { Alert.alert('Enter a family name'); return; }
+    if (familyName.trim().length < 2) { Alert.alert('יש להזין שם משפחה'); return; }
     setLoading(true);
     try {
       const family = await firebaseService.createFamily(familyName.trim());
       await setFamilyId(family.id);
       router.replace('/(auth)/add-child?first=true');
     } catch (e: any) {
-      Alert.alert('Error', e.message);
+      Alert.alert('שגיאה', e.message);
     } finally { setLoading(false); }
   };
 
   const join = async () => {
-    if (inviteCode.trim().length !== 6) { Alert.alert('Enter a valid 6-character code'); return; }
+    if (inviteCode.trim().length !== 6) { Alert.alert('יש להזין קוד תקין בן 6 תווים'); return; }
     setLoading(true);
     try {
       const family = await firebaseService.getFamilyByCode(inviteCode.trim());
-      if (!family) { Alert.alert('Invalid code', 'No family found with that code.'); return; }
+      if (!family) { Alert.alert('קוד שגוי', 'לא נמצאה משפחה עם קוד זה.'); return; }
       await firebaseService.joinFamily(family.id);
       await setFamilyId(family.id);
       router.replace('/(app)');
     } catch (e: any) {
-      Alert.alert('Error', e.message);
+      Alert.alert('שגיאה', e.message);
     } finally { setLoading(false); }
   };
 
@@ -50,22 +50,23 @@ export default function CreateFamilyScreen() {
     <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : undefined} style={{ flex: 1, backgroundColor: bg }}>
       <ScrollView contentContainerStyle={[styles.container, { backgroundColor: bg }]} keyboardShouldPersistTaps="handled">
         <Text style={styles.icon}>🏠</Text>
-        <Text style={[styles.h1, { color: txt }]}>{mode === 'create' ? 'Create your family' : 'Join family'}</Text>
+        <Text style={[styles.h1, { color: txt }]}>{mode === 'create' ? 'צור את משפחתך' : 'הצטרף למשפחה'}</Text>
         <Text style={[styles.sub, { color: Colors.lightMuted }]}>
-          {mode === 'create' ? 'Set up your family space in FamilyOS' : 'Enter the invite code your partner shared'}
+          {mode === 'create' ? 'הגדר את מרחב המשפחה שלך ב-FamilyOS' : 'הזן את קוד ההזמנה ששיתף השותף שלך'}
         </Text>
 
         {mode === 'create' ? (
           <>
             <TextInput
               value={familyName} onChangeText={setFamilyName}
-              placeholder="Family name (e.g. The Cohen Family)"
+              placeholder="שם המשפחה (למשל: משפחת כהן)"
               placeholderTextColor={Colors.lightMuted}
               autoCapitalize="words"
+              textAlign="right"
               style={[styles.input, { backgroundColor: cardBg, color: txt }]}
             />
             <Pressable onPress={create} disabled={loading} style={[styles.btn, loading && { opacity: 0.6 }]}>
-              <Text style={styles.btnText}>{loading ? 'Creating…' : 'Create Family'}</Text>
+              <Text style={styles.btnText}>{loading ? 'יוצר…' : 'יצירת משפחה'}</Text>
             </Pressable>
           </>
         ) : (
@@ -77,14 +78,14 @@ export default function CreateFamilyScreen() {
               style={[styles.input, { backgroundColor: cardBg, color: txt, letterSpacing: 6, fontSize: 24, textAlign: 'center' }]}
             />
             <Pressable onPress={join} disabled={loading} style={[styles.btn, loading && { opacity: 0.6 }]}>
-              <Text style={styles.btnText}>{loading ? 'Joining…' : 'Join Family'}</Text>
+              <Text style={styles.btnText}>{loading ? 'מצטרף…' : 'הצטרפות למשפחה'}</Text>
             </Pressable>
           </>
         )}
 
         <Pressable onPress={() => setMode(m => m === 'create' ? 'join' : 'create')} style={{ marginTop: Spacing.xl }}>
           <Text style={[styles.link, { textAlign: 'center' }]}>
-            {mode === 'create' ? 'Have an invite code? Join family →' : 'Create a new family instead'}
+            {mode === 'create' ? 'יש לך קוד הזמנה? הצטרף למשפחה ←' : 'צור משפחה חדשה במקום'}
           </Text>
         </Pressable>
       </ScrollView>

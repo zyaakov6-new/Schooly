@@ -31,21 +31,21 @@ export default function ChildDetailScreen() {
         {/* Hero */}
         <LinearGradient colors={[color + 'CC', color]} style={styles.hero}>
           <Pressable onPress={() => router.back()} style={styles.backBtn}>
-            <Text style={styles.backTxt}>←</Text>
+            <Text style={styles.backTxt}>→</Text>
           </Pressable>
           <View style={[styles.avatar, { backgroundColor: 'rgba(255,255,255,0.2)' }]}>
             <Text style={{ fontSize: 40 }}>{child.emoji}</Text>
           </View>
           <Text style={styles.heroName}>{child.name}</Text>
-          <Text style={styles.heroSub}>{child.age} yrs · {child.school} · {child.className}</Text>
+          <Text style={styles.heroSub}>{child.age} שנים · {child.school} · {child.className}</Text>
         </LinearGradient>
 
         {/* Stats */}
         <View style={styles.statsRow}>
           {[
-            { label: 'Events', value: events.length, icon: '📅', color: color },
-            { label: 'Tasks',  value: tasks.length,  icon: '✅', color: Colors.warning },
-            { label: 'Age',    value: child.age,     icon: '🎂', color: Colors.success },
+            { label: 'אירועים', value: events.length, icon: '📅', color: color },
+            { label: 'משימות',  value: tasks.length,  icon: '✅', color: Colors.warning },
+            { label: 'גיל',     value: child.age,     icon: '🎂', color: Colors.success },
           ].map(s => (
             <View key={s.label} style={[styles.statCard, { backgroundColor: dark ? Colors.darkCard : Colors.lightCard }, cardShadow(dark)]}>
               <Text style={{ fontSize: 20 }}>{s.icon}</Text>
@@ -58,17 +58,17 @@ export default function ChildDetailScreen() {
         {/* Quick actions */}
         <View style={styles.actionsRow}>
           <Pressable onPress={() => router.push(`/(app)/add-event?childId=${id}`)} style={[styles.actionBtn, { borderColor: color + '66' }]}>
-            <Text style={[styles.actionTxt, { color }]}>+ Event</Text>
+            <Text style={[styles.actionTxt, { color }]}>+ אירוע</Text>
           </Pressable>
           <Pressable onPress={() => router.push(`/(app)/add-task?childId=${id}`)} style={[styles.actionBtn, { borderColor: Colors.warning + '66' }]}>
-            <Text style={[styles.actionTxt, { color: Colors.warning }]}>+ Task</Text>
+            <Text style={[styles.actionTxt, { color: Colors.warning }]}>+ משימה</Text>
           </Pressable>
         </View>
 
         {/* Upcoming Events */}
         {events.length > 0 && (
           <>
-            <SectionTitle title="Upcoming Events" />
+            <SectionTitle title="אירועים קרובים" />
             {events.slice(0, 5).map(e => <EventTile key={e.id} event={e} />)}
           </>
         )}
@@ -76,19 +76,19 @@ export default function ChildDetailScreen() {
         {/* Pending Tasks */}
         {tasks.length > 0 && (
           <>
-            <SectionTitle title="Pending Tasks" />
+            <SectionTitle title="משימות ממתינות" />
             {tasks.map(t => <TaskTile key={t.id} task={t} />)}
           </>
         )}
 
         {events.length === 0 && tasks.length === 0 && (
-          <EmptyState emoji="🌟" title="All clear!" subtitle="No events or tasks for this child yet." />
+          <EmptyState emoji="🌟" title="הכל מסודר!" subtitle="אין אירועים או משימות לילד זה עדיין." />
         )}
 
         {/* Allergies */}
         {child.allergies && (
           <View style={[styles.alertBox]}>
-            <Text style={styles.alertTitle}>⚠️ Allergies & Medical</Text>
+            <Text style={styles.alertTitle}>⚠️ אלרגיות ורפואה</Text>
             <Text style={[styles.alertBody, { color: txt }]}>{child.allergies}</Text>
           </View>
         )}
@@ -106,7 +106,7 @@ function SectionTitle({ title }: { title: string }) {
 
 const styles = StyleSheet.create({
   hero: { padding: Spacing.xl, paddingTop: 60, alignItems: 'center', gap: 8 },
-  backBtn: { position: 'absolute', top: 56, left: 16, padding: 8 },
+  backBtn: { position: 'absolute', top: 56, right: 16, padding: 8 },
   backTxt: { fontSize: 22, color: '#fff' },
   avatar: { width: 80, height: 80, borderRadius: 24, alignItems: 'center', justifyContent: 'center', borderWidth: 2, borderColor: 'rgba(255,255,255,0.8)' },
   heroName: { fontSize: FontSize['2xl'], fontWeight: '800', color: '#fff' },

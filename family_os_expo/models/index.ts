@@ -23,12 +23,12 @@ export interface Child {
 export type EventType = 'school' | 'test' | 'activity' | 'family' | 'payment' | 'trip';
 
 export const EVENT_META: Record<EventType, { label: string; emoji: string; color: string }> = {
-  school:   { label: 'School',   emoji: '🏫', color: '#1976D2' },
-  test:     { label: 'Test',     emoji: '📝', color: '#EF4444' },
-  activity: { label: 'Activity', emoji: '⚽', color: '#10B981' },
-  family:   { label: 'Family',   emoji: '👨‍👩‍👧‍👦', color: '#F59E0B' },
-  payment:  { label: 'Payment',  emoji: '💰', color: '#8B5CF6' },
-  trip:     { label: 'Trip',     emoji: '🚌', color: '#06B6D4' },
+  school:   { label: 'בית ספר', emoji: '🏫', color: '#1976D2' },
+  test:     { label: 'מבחן',    emoji: '📝', color: '#EF4444' },
+  activity: { label: 'פעילות',  emoji: '⚽', color: '#10B981' },
+  family:   { label: 'משפחה',   emoji: '👨‍👩‍👧‍👦', color: '#F59E0B' },
+  payment:  { label: 'תשלום',   emoji: '💰', color: '#8B5CF6' },
+  trip:     { label: 'טיול',    emoji: '🚌', color: '#06B6D4' },
 };
 
 export interface FamilyEvent {
@@ -53,10 +53,10 @@ export type TaskPriority = 'low' | 'medium' | 'high' | 'urgent';
 export type TaskStatus   = 'pending' | 'inProgress' | 'done' | 'snoozed';
 
 export const PRIORITY_META: Record<TaskPriority, { label: string; color: string }> = {
-  low:    { label: 'Low',    color: '#10B981' },
-  medium: { label: 'Medium', color: '#F59E0B' },
-  high:   { label: 'High',   color: '#EF4444' },
-  urgent: { label: 'Urgent', color: '#DC2626' },
+  low:    { label: 'נמוכה',  color: '#10B981' },
+  medium: { label: 'בינונית', color: '#F59E0B' },
+  high:   { label: 'גבוהה',  color: '#EF4444' },
+  urgent: { label: 'דחוף',   color: '#DC2626' },
 };
 
 export interface FamilyTask {

@@ -20,14 +20,14 @@ export default function RegisterScreen() {
 
   const register = async () => {
     if (name.trim().length < 2 || !email.includes('@') || password.length < 6) {
-      Alert.alert('Invalid input', 'Fill in all fields correctly.');
+      Alert.alert('קלט שגוי', 'יש למלא את כל השדות כראוי.');
       return;
     }
     setLoading(true);
     try {
       await firebaseService.register(email.trim(), password, name.trim());
     } catch (e: any) {
-      Alert.alert('Registration failed', e.message);
+      Alert.alert('ההרשמה נכשלה', e.message);
     } finally {
       setLoading(false);
     }
@@ -37,38 +37,39 @@ export default function RegisterScreen() {
     <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : undefined} style={{ flex: 1, backgroundColor: bg }}>
       <ScrollView contentContainerStyle={[styles.container, { backgroundColor: bg }]} keyboardShouldPersistTaps="handled">
         <Pressable onPress={() => router.back()} style={styles.back}>
-          <Text style={{ fontSize: 22 }}>←</Text>
+          <Text style={{ fontSize: 22 }}>→</Text>
         </Pressable>
 
-        <Text style={[styles.h1, { color: txt }]}>Create account</Text>
-        <Text style={[styles.sub, { color: Colors.lightMuted }]}>Join FamilyOS and simplify family life</Text>
+        <Text style={[styles.h1, { color: txt }]}>יצירת חשבון</Text>
+        <Text style={[styles.sub, { color: Colors.lightMuted }]}>הצטרף ל-FamilyOS ופשט את חיי המשפחה</Text>
 
         <View style={styles.form}>
           {[
-            { label: 'Your name', value: name, set: setName, type: 'default', key: 'name' },
-            { label: 'Email', value: email, set: setEmail, type: 'email-address', key: 'email' },
-            { label: 'Password (min 6)', value: password, set: setPassword, type: 'default', key: 'pw', secure: true },
+            { label: 'שמך', value: name, set: setName, type: 'default', key: 'name' },
+            { label: 'דואר אלקטרוני', value: email, set: setEmail, type: 'email-address', key: 'email' },
+            { label: 'סיסמה (לפחות 6)', value: password, set: setPassword, type: 'default', key: 'pw', secure: true },
           ].map(f => (
             <TextInput
               key={f.key}
               value={f.value} onChangeText={f.set}
               placeholder={f.label} placeholderTextColor={Colors.lightMuted}
               keyboardType={f.type as any}
-              autoCapitalize={f.type === 'email-address' ? 'none' : 'words'}
+              autoCapitalize="none"
               secureTextEntry={f.secure}
+              textAlign="right"
               style={[styles.input, { backgroundColor: cardBg, color: txt }]}
             />
           ))}
 
           <Pressable onPress={register} disabled={loading} style={[styles.btn, loading && { opacity: 0.6 }]}>
-            <Text style={styles.btnText}>{loading ? 'Creating…' : 'Create Account'}</Text>
+            <Text style={styles.btnText}>{loading ? 'יוצר…' : 'יצירת חשבון'}</Text>
           </Pressable>
         </View>
 
         <View style={styles.footer}>
-          <Text style={{ color: Colors.lightMuted }}>Already have an account? </Text>
+          <Text style={{ color: Colors.lightMuted }}>כבר יש לך חשבון? </Text>
           <Pressable onPress={() => router.replace('/(auth)/login')}>
-            <Text style={{ color: Colors.accent, fontWeight: '600' }}>Sign in</Text>
+            <Text style={{ color: Colors.accent, fontWeight: '600' }}>כניסה</Text>
           </Pressable>
         </View>
       </ScrollView>

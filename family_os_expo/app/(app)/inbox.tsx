@@ -50,10 +50,10 @@ export default function InboxScreen() {
 
   const saveAll = async () => {
     if (!parsed) return;
-    if (!familyId) { Alert.alert('Error', 'No family found.'); return; }
+    if (!familyId) { Alert.alert('שגיאה', 'לא נמצאה משפחה.'); return; }
     const hasAnything = parsed.events.length > 0 || parsed.tasks.length > 0;
     if (!hasAnything) {
-      Alert.alert('Nothing to save', 'No events or tasks were detected in this message.');
+      Alert.alert('אין מה לשמור', 'לא זוהו אירועים או משימות בהודעה זו.');
       return;
     }
     setSaving(true);
@@ -64,15 +64,15 @@ export default function InboxScreen() {
       ]);
       haptic.success();
       Alert.alert(
-        '✅ Saved!',
+        '✅ נשמר!',
         [
-          parsed.events.length ? `${parsed.events.length} event${parsed.events.length > 1 ? 's' : ''}` : '',
-          parsed.tasks.length  ? `${parsed.tasks.length} task${parsed.tasks.length > 1 ? 's' : ''}` : '',
-        ].filter(Boolean).join(' and ') + ' added to your family.',
-        [{ text: 'OK', onPress: () => { setText(''); setParsed(null); router.back(); } }],
+          parsed.events.length ? `${parsed.events.length} אירועים` : '',
+          parsed.tasks.length  ? `${parsed.tasks.length} משימות` : '',
+        ].filter(Boolean).join(' ו-') + ' נוספו למשפחתך.',
+        [{ text: 'אישור', onPress: () => { setText(''); setParsed(null); router.back(); } }],
       );
     } catch (e: any) {
-      Alert.alert('Error', e.message ?? 'Failed to save.');
+      Alert.alert('שגיאה', e.message ?? 'השמירה נכשלה.');
     } finally {
       setSaving(false);
     }
@@ -91,9 +91,9 @@ export default function InboxScreen() {
         {/* Header */}
         <View style={styles.header}>
           <Pressable onPress={() => router.back()}>
-            <Text style={{ color: Colors.accent, fontSize: FontSize.base }}>← Back</Text>
+            <Text style={{ color: Colors.accent, fontSize: FontSize.base }}>→ חזור</Text>
           </Pressable>
-          <Text style={[styles.headerTitle, { color: txt }]}>Smart Inbox</Text>
+          <Text style={[styles.headerTitle, { color: txt }]}>תיבת דואר חכמה</Text>
           <View style={{ width: 60 }} />
         </View>
 
@@ -101,7 +101,7 @@ export default function InboxScreen() {
           {/* Intro */}
           <View style={{ paddingHorizontal: Spacing.lg, marginBottom: Spacing.md }}>
             <Text style={[styles.intro, { color: muted }]}>
-              Paste a school message, WhatsApp text, or note. FamilyOS will extract dates, events, and tasks automatically.
+              הדבק הודעת בית ספר, הודעת וואטסאפ או פתק. FamilyOS יחלץ תאריכים, אירועים ומשימות אוטומטית.
             </Text>
           </View>
 
@@ -114,7 +114,7 @@ export default function InboxScreen() {
                   onPress={() => setChild(undefined)}
                   style={[styles.childChip, !selectedChild && styles.childChipActive, { borderColor: border }]}
                 >
-                  <Text style={[styles.childChipTxt, { color: !selectedChild ? Colors.accent : muted }]}>All kids</Text>
+                  <Text style={[styles.childChipTxt, { color: !selectedChild ? Colors.accent : muted }]}>כל הילדים</Text>
                 </Pressable>
                 {children.map(c => (
                   <Pressable
@@ -162,7 +162,7 @@ export default function InboxScreen() {
             disabled={!text.trim()}
             style={[styles.parseBtn, !text.trim() && { opacity: 0.4 }]}
           >
-            <Text style={styles.parseBtnTxt}>✨ Parse message</Text>
+            <Text style={styles.parseBtnTxt}>✨ נתח הודעה</Text>
           </Pressable>
 
           {/* Parse result */}
@@ -178,8 +178,8 @@ export default function InboxScreen() {
                   color: (parsed.events.length + parsed.tasks.length) > 0 ? Colors.accent : Colors.error,
                 }]}>
                   {(parsed.events.length + parsed.tasks.length) > 0
-                    ? `Found ${parsed.events.length} event${parsed.events.length !== 1 ? 's' : ''} · ${parsed.tasks.length} task${parsed.tasks.length !== 1 ? 's' : ''}`
-                    : 'No events or tasks detected'}
+                    ? `נמצאו ${parsed.events.length} אירועים · ${parsed.tasks.length} משימות`
+                    : 'לא זוהו אירועים או משימות'}
                 </Text>
                 {parsed.parsedDate && (
                   <Text style={[styles.summaryDate, { color: muted }]}>
@@ -196,7 +196,7 @@ export default function InboxScreen() {
               {/* Events */}
               {parsed.events.length > 0 && (
                 <>
-                  <SectionLabel label="EVENTS DETECTED" muted={muted} />
+                  <SectionLabel label="אירועים שזוהו" muted={muted} />
                   {parsed.events.map((e, i) => {
                     const meta = EVENT_META[e.type];
                     return (
@@ -227,7 +227,7 @@ export default function InboxScreen() {
               {/* Tasks */}
               {parsed.tasks.length > 0 && (
                 <>
-                  <SectionLabel label="TASKS DETECTED" muted={muted} />
+                  <SectionLabel label="משימות שזוהו" muted={muted} />
                   {parsed.tasks.map((t, i) => {
                     const pMeta = PRIORITY_META[t.priority];
                     return (
@@ -237,10 +237,10 @@ export default function InboxScreen() {
                           <Text style={[styles.resultTitle, { color: txt }]}>{t.title}</Text>
                         </View>
                         {t.dueDate && (
-                          <Text style={[styles.resultMetaTxt, { color: muted }]}>📅 Due {formatDate(t.dueDate)}</Text>
+                          <Text style={[styles.resultMetaTxt, { color: muted }]}>📅 יעד: {formatDate(t.dueDate)}</Text>
                         )}
                         <View style={[styles.typeTag, { backgroundColor: pMeta.color + '22' }]}>
-                          <Text style={[styles.typeTagTxt, { color: pMeta.color }]}>{pMeta.label} priority</Text>
+                          <Text style={[styles.typeTagTxt, { color: pMeta.color }]}>עדיפות {pMeta.label}</Text>
                         </View>
                       </View>
                     );
@@ -251,7 +251,7 @@ export default function InboxScreen() {
               {/* Items list (if any, not converted to tasks) */}
               {parsed.items.length > 0 && parsed.tasks.length === 0 && (
                 <>
-                  <SectionLabel label="LIST ITEMS" muted={muted} />
+                  <SectionLabel label="פריטי רשימה" muted={muted} />
                   <View style={[styles.resultCard, { backgroundColor: cardBg, borderLeftColor: Colors.accent }]}>
                     {parsed.items.map((item, i) => (
                       <View key={i} style={styles.listItem}>
@@ -267,10 +267,10 @@ export default function InboxScreen() {
               {(parsed.events.length + parsed.tasks.length) > 0 && (
                 <View style={styles.actionRow}>
                   <Pressable onPress={clear} style={[styles.dismissBtn, { borderColor: border }]}>
-                    <Text style={[styles.dismissTxt, { color: muted }]}>Dismiss</Text>
+                    <Text style={[styles.dismissTxt, { color: muted }]}>ביטול</Text>
                   </Pressable>
                   <Pressable onPress={saveAll} disabled={saving} style={[styles.saveAllBtn, saving && { opacity: 0.5 }]}>
-                    <Text style={styles.saveAllTxt}>{saving ? 'Saving…' : '✅ Save all'}</Text>
+                    <Text style={styles.saveAllTxt}>{saving ? 'שומר…' : '✅ שמור הכל'}</Text>
                   </Pressable>
                 </View>
               )}

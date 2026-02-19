@@ -25,10 +25,10 @@ export default function ProfileScreen() {
   const initial = user?.displayName?.[0]?.toUpperCase() ?? user?.email?.[0]?.toUpperCase() ?? '?';
 
   const signOut = async () => {
-    Alert.alert('Sign out', 'Are you sure?', [
-      { text: 'Cancel', style: 'cancel' },
+    Alert.alert('התנתקות', 'האם אתה בטוח?', [
+      { text: 'ביטול', style: 'cancel' },
       {
-        text: 'Sign out', style: 'destructive',
+        text: 'התנתק', style: 'destructive',
         onPress: async () => {
           await AsyncStorage.clear();
           await firebaseService.logout();
@@ -41,14 +41,14 @@ export default function ProfileScreen() {
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: bg }}>
       <ScrollView contentContainerStyle={{ paddingBottom: 40 }}>
-        <Text style={[styles.title, { color: txt, paddingHorizontal: Spacing.lg, paddingTop: Spacing.lg }]}>Profile</Text>
+        <Text style={[styles.title, { color: txt, paddingHorizontal: Spacing.lg, paddingTop: Spacing.lg }]}>פרופיל</Text>
 
         {/* Avatar */}
         <View style={styles.avatarSection}>
           <View style={styles.avatar}>
             <Text style={styles.avatarText}>{initial}</Text>
           </View>
-          <Text style={[styles.displayName, { color: txt }]}>{user?.displayName ?? 'Parent'}</Text>
+          <Text style={[styles.displayName, { color: txt }]}>{user?.displayName ?? 'הורה'}</Text>
           <Text style={[styles.email, { color: muted }]}>{user?.email}</Text>
           {family && (
             <View style={styles.familyBadge}>
@@ -58,8 +58,8 @@ export default function ProfileScreen() {
         </View>
 
         {/* Appearance */}
-        <SettingsSection title="APPEARANCE" cardBg={cardBg}>
-          <SettingsRow icon="🎨" label="Theme" cardBg={cardBg} txt={txt}>
+        <SettingsSection title="מראה" cardBg={cardBg}>
+          <SettingsRow icon="🎨" label="ערכת נושא" cardBg={cardBg} txt={txt}>
             <View style={styles.segmented}>
               {(['system','light','dark'] as const).map(m => (
                 <Pressable key={m} onPress={() => setTheme(m)}
@@ -71,7 +71,7 @@ export default function ProfileScreen() {
               ))}
             </View>
           </SettingsRow>
-          <SettingsRow icon="🌐" label="Language" cardBg={cardBg} txt={txt}>
+          <SettingsRow icon="🌐" label="שפה" cardBg={cardBg} txt={txt}>
             <View style={styles.segmented}>
               {(['he','en'] as const).map(l => (
                 <Pressable key={l} onPress={() => setLocale(l)}
@@ -84,30 +84,30 @@ export default function ProfileScreen() {
         </SettingsSection>
 
         {/* Family */}
-        <SettingsSection title="FAMILY" cardBg={cardBg}>
+        <SettingsSection title="משפחה" cardBg={cardBg}>
           {family && (
-            <SettingsRow icon="🔑" label={`Invite code: ${family.inviteCode}`} cardBg={cardBg} txt={txt}>
+            <SettingsRow icon="🔑" label={`קוד הזמנה: ${family.inviteCode}`} cardBg={cardBg} txt={txt}>
               <Text style={{ color: Colors.accent }}>›</Text>
             </SettingsRow>
           )}
-          <SettingsRow icon="👥" label="Invite partner" cardBg={cardBg} txt={txt} onPress={() => {}}>
+          <SettingsRow icon="👥" label="הזמן שותף" cardBg={cardBg} txt={txt} onPress={() => {}}>
             <Text style={{ color: muted }}>›</Text>
           </SettingsRow>
         </SettingsSection>
 
         {/* Notifications */}
-        <SettingsSection title="NOTIFICATIONS" cardBg={cardBg}>
-          <SettingsRow icon="🔔" label="Daily summary" cardBg={cardBg} txt={txt}>
+        <SettingsSection title="התראות" cardBg={cardBg}>
+          <SettingsRow icon="🔔" label="סיכום יומי" cardBg={cardBg} txt={txt}>
             <Switch value={true} onValueChange={() => {}} trackColor={{ true: Colors.accent }} />
           </SettingsRow>
-          <SettingsRow icon="⏰" label="Task reminders" cardBg={cardBg} txt={txt}>
+          <SettingsRow icon="⏰" label="תזכורות משימות" cardBg={cardBg} txt={txt}>
             <Switch value={true} onValueChange={() => {}} trackColor={{ true: Colors.accent }} />
           </SettingsRow>
         </SettingsSection>
 
         {/* Sign out */}
         <Pressable onPress={signOut} style={[styles.signOutBtn, { borderColor: Colors.error + '55' }]}>
-          <Text style={{ color: Colors.error, fontWeight: '700', fontSize: FontSize.base }}>Sign out</Text>
+          <Text style={{ color: Colors.error, fontWeight: '700', fontSize: FontSize.base }}>התנתק</Text>
         </Pressable>
 
         <Text style={[styles.version, { color: muted }]}>FamilyOS v1.0.0</Text>

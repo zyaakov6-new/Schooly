@@ -45,9 +45,9 @@ export default function DashboardScreen() {
         </View>
 
         {/* ── Children ───────────────────────────────────────────── */}
-        <SectionHeader title="My Kids" icon="👨‍👩‍👧‍👦" onAdd={() => router.push('/(auth)/add-child')} />
+        <SectionHeader title="הילדים שלי" icon="👨‍👩‍👧‍👦" onAdd={() => router.push('/(auth)/add-child')} />
         {children.length === 0 ? (
-          <EmptyState emoji="👶" title="No children yet" subtitle="Add your first child to get started" actionLabel="Add child" onAction={() => router.push('/(auth)/add-child')} />
+          <EmptyState emoji="👶" title="אין ילדים עדיין" subtitle="הוסף את ילדך הראשון כדי להתחיל" actionLabel="הוסף ילד" onAction={() => router.push('/(auth)/add-child')} />
         ) : (
           <FlatList
             data={[...children, null]}   // null = "add" button
@@ -58,7 +58,7 @@ export default function DashboardScreen() {
               item === null ? (
                 <Pressable onPress={() => router.push('/(auth)/add-child')} style={[styles.addChild, { backgroundColor: dark ? Colors.darkCard : Colors.lightCard, borderColor: Colors.accent + '44' }]}>
                   <Text style={{ fontSize: 28, color: Colors.accent }}>＋</Text>
-                  <Text style={{ color: Colors.accent, fontWeight: '600', fontSize: 12, marginTop: 4 }}>Add child</Text>
+                  <Text style={{ color: Colors.accent, fontWeight: '600', fontSize: 12, marginTop: 4 }}>הוסף ילד</Text>
                 </Pressable>
               ) : (
                 <ChildCard child={item} onPress={() => router.push(`/(app)/kids/${item.id}`)} />
@@ -68,24 +68,24 @@ export default function DashboardScreen() {
         )}
 
         {/* ── Today's Events ─────────────────────────────────────── */}
-        <SectionHeader title="Today's Schedule" icon="📅" onAdd={() => router.push('/(app)/add-event')} />
+        <SectionHeader title="לוח הזמנים להיום" icon="📅" onAdd={() => router.push('/(app)/add-event')} />
         {todayEvts.length === 0 ? (
           <View style={[styles.emptyCard, { backgroundColor: dark ? Colors.darkCard : Colors.lightCard }]}>
             <Text style={{ fontSize: 28 }}>🎉</Text>
-            <Text style={[styles.emptyCardTitle, { color: txt }]}>Free day!</Text>
-            <Text style={[styles.emptyCardSub, { color: Colors.lightMuted }]}>No events scheduled for today</Text>
+            <Text style={[styles.emptyCardTitle, { color: txt }]}>יום חופשי!</Text>
+            <Text style={[styles.emptyCardSub, { color: Colors.lightMuted }]}>אין אירועים מתוכננים להיום</Text>
           </View>
         ) : (
           todayEvts.map(e => <EventTile key={e.id} event={e} />)
         )}
 
         {/* ── Pending Tasks ──────────────────────────────────────── */}
-        <SectionHeader title="Pending Tasks" icon="✅" onAdd={() => router.push('/(app)/add-task')} />
+        <SectionHeader title="משימות ממתינות" icon="✅" onAdd={() => router.push('/(app)/add-task')} />
         {pendingTasks.length === 0 ? (
           <View style={[styles.emptyCard, { backgroundColor: dark ? Colors.darkCard : Colors.lightCard }]}>
             <Text style={{ fontSize: 28 }}>✅</Text>
-            <Text style={[styles.emptyCardTitle, { color: txt }]}>All caught up!</Text>
-            <Text style={[styles.emptyCardSub, { color: Colors.lightMuted }]}>No pending tasks</Text>
+            <Text style={[styles.emptyCardTitle, { color: txt }]}>הכל מסודר!</Text>
+            <Text style={[styles.emptyCardSub, { color: Colors.lightMuted }]}>אין משימות ממתינות</Text>
           </View>
         ) : (
           pendingTasks.map(t => <TaskTile key={t.id} task={t} />)
@@ -95,7 +95,7 @@ export default function DashboardScreen() {
 
       {/* FAB */}
       <Pressable onPress={() => router.push('/(app)/add-event')} style={styles.fab}>
-        <Text style={styles.fabText}>＋ Add</Text>
+        <Text style={styles.fabText}>＋ הוסף</Text>
       </Pressable>
     </SafeAreaView>
   );
@@ -110,7 +110,7 @@ function SectionHeader({ title, icon, onAdd }: { title: string; icon: string; on
       <Text style={[styles.sectionTitle, { color: txt }]}>{title}</Text>
       {onAdd && (
         <Pressable onPress={onAdd} style={styles.seeAll}>
-          <Text style={{ color: Colors.accent, fontSize: 13, fontWeight: '600' }}>+ Add</Text>
+          <Text style={{ color: Colors.accent, fontSize: 13, fontWeight: '600' }}>+ הוסף</Text>
         </Pressable>
       )}
     </View>

@@ -39,8 +39,8 @@ export default function AddTaskScreen() {
   const [saving, setSaving]       = useState(false);
 
   const save = async () => {
-    if (!title.trim()) { Alert.alert('Missing title', 'Please enter a task title.'); return; }
-    if (!familyId)     { Alert.alert('Error', 'No family found.'); return; }
+    if (!title.trim()) { Alert.alert('כותרת חסרה', 'אנא הזן כותרת למשימה.'); return; }
+    if (!familyId)     { Alert.alert('שגיאה', 'לא נמצאה משפחה.'); return; }
     setSaving(true);
     try {
       const parsedItems = items.split('\n').map(s => s.trim()).filter(Boolean);
@@ -59,7 +59,7 @@ export default function AddTaskScreen() {
       });
       router.back();
     } catch (e: any) {
-      Alert.alert('Error', e.message ?? 'Failed to save task.');
+      Alert.alert('שגיאה', e.message ?? 'שמירת המשימה נכשלה.');
     } finally {
       setSaving(false);
     }
@@ -71,12 +71,12 @@ export default function AddTaskScreen() {
         {/* Header */}
         <View style={styles.header}>
           <Pressable onPress={() => router.back()}>
-            <Text style={{ color: Colors.accent, fontSize: FontSize.base }}>Cancel</Text>
+            <Text style={{ color: Colors.accent, fontSize: FontSize.base }}>ביטול</Text>
           </Pressable>
-          <Text style={[styles.headerTitle, { color: txt }]}>New Task</Text>
+          <Text style={[styles.headerTitle, { color: txt }]}>משימה חדשה</Text>
           <Pressable onPress={save} disabled={saving}>
             <Text style={{ color: saving ? muted : Colors.accent, fontWeight: '700', fontSize: FontSize.base }}>
-              {saving ? 'Saving…' : 'Save'}
+              {saving ? 'שומר…' : 'שמור'}
             </Text>
           </Pressable>
         </View>
@@ -85,7 +85,7 @@ export default function AddTaskScreen() {
         <View style={[styles.card, { backgroundColor: cardBg }]}>
           <TextInput
             style={[styles.titleInput, { color: txt }]}
-            placeholder="Task title"
+            placeholder="כותרת המשימה"
             placeholderTextColor={muted}
             value={title}
             onChangeText={setTitle}
@@ -95,7 +95,7 @@ export default function AddTaskScreen() {
         </View>
 
         {/* Priority */}
-        <SectionLabel label="PRIORITY" muted={muted} />
+        <SectionLabel label="עדיפות" muted={muted} />
         <View style={[styles.priorityRow, { marginHorizontal: Spacing.lg, marginBottom: Spacing.md }]}>
           {PRIORITIES.map(([key, meta]) => (
             <Pressable
@@ -116,15 +116,15 @@ export default function AddTaskScreen() {
         </View>
 
         {/* Due date */}
-        <SectionLabel label="DUE DATE" muted={muted} />
+        <SectionLabel label="תאריך יעד" muted={muted} />
         <View style={[styles.card, { backgroundColor: cardBg }]}>
           <View style={[styles.switchRow, { borderBottomColor: border, borderBottomWidth: hasDue ? 0.5 : 0 }]}>
-            <Text style={[styles.switchLabel, { color: txt }]}>Set due date</Text>
+            <Text style={[styles.switchLabel, { color: txt }]}>הגדר תאריך יעד</Text>
             <Switch value={hasDue} onValueChange={setHasDue} trackColor={{ true: Colors.accent }} />
           </View>
           {hasDue && (
             <View style={{ padding: 12 }}>
-              <DateInput value={dueDate} onChange={setDueDate} mode="date" label="Due date" />
+              <DateInput value={dueDate} onChange={setDueDate} mode="date" label="תאריך יעד" />
             </View>
           )}
         </View>
@@ -132,7 +132,7 @@ export default function AddTaskScreen() {
         {/* Child */}
         {children.length > 0 && (
           <>
-            <SectionLabel label="ASSIGN TO CHILD" muted={muted} />
+            <SectionLabel label="שייך לילד" muted={muted} />
             <ScrollView horizontal showsHorizontalScrollIndicator={false}
               style={{ marginHorizontal: Spacing.lg, marginBottom: Spacing.md }}>
               <View style={{ flexDirection: 'row', gap: 8 }}>
@@ -140,7 +140,7 @@ export default function AddTaskScreen() {
                   onPress={() => setChildId(undefined)}
                   style={[styles.childChip, !childId && styles.childChipActive, { borderColor: border }]}
                 >
-                  <Text style={[styles.childChipTxt, { color: !childId ? Colors.accent : muted }]}>General</Text>
+                  <Text style={[styles.childChipTxt, { color: !childId ? Colors.accent : muted }]}>כללי</Text>
                 </Pressable>
                 {children.map(c => (
                   <Pressable
@@ -163,42 +163,45 @@ export default function AddTaskScreen() {
         )}
 
         {/* Details */}
-        <SectionLabel label="DETAILS" muted={muted} />
+        <SectionLabel label="פרטים" muted={muted} />
         <View style={[styles.card, { backgroundColor: cardBg }]}>
           <TextInput
             style={[styles.fieldInput, { color: txt, borderBottomColor: border, borderBottomWidth: 0.5 }]}
-            placeholder="📝 Description (optional)"
+            placeholder="📝 תיאור (אופציונלי)"
             placeholderTextColor={muted}
             value={description}
             onChangeText={setDesc}
             multiline
             numberOfLines={2}
             textAlignVertical="top"
+            textAlign="right"
           />
           <View style={[styles.switchRow, { borderBottomColor: border, borderBottomWidth: hasAmount ? 0.5 : 0 }]}>
-            <Text style={[styles.switchLabel, { color: txt }]}>💰 Payment required</Text>
+            <Text style={[styles.switchLabel, { color: txt }]}>💰 תשלום נדרש</Text>
             <Switch value={hasAmount} onValueChange={setHasAmount} trackColor={{ true: Colors.accent }} />
           </View>
           {hasAmount && (
             <TextInput
               style={[styles.fieldInput, { color: txt, borderBottomColor: border, borderBottomWidth: 0.5 }]}
-              placeholder="Amount in ₪"
+              placeholder="סכום בש״ח"
               placeholderTextColor={muted}
               value={amount}
               onChangeText={setAmount}
               keyboardType="decimal-pad"
               returnKeyType="next"
+              textAlign="right"
             />
           )}
           <TextInput
             style={[styles.fieldInput, styles.checklistInput, { color: txt }]}
-            placeholder={`✅ Checklist items (one per line)\n- Item 1\n- Item 2`}
+            placeholder={`✅ פריטי רשימה (שורה לכל פריט)\n- פריט 1\n- פריט 2`}
             placeholderTextColor={muted}
             value={items}
             onChangeText={setItems}
             multiline
             numberOfLines={4}
             textAlignVertical="top"
+            textAlign="right"
           />
         </View>
       </ScrollView>

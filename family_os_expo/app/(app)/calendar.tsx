@@ -42,9 +42,9 @@ export default function CalendarScreen() {
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: bg }}>
       <View style={styles.header}>
-        <Text style={[styles.title, { color: txt }]}>Calendar</Text>
+        <Text style={[styles.title, { color: txt }]}>יומן</Text>
         <Pressable onPress={() => router.push('/(app)/add-event')} style={styles.addBtn}>
-          <Text style={styles.addBtnTxt}>+ Event</Text>
+          <Text style={styles.addBtnTxt}>+ אירוע</Text>
         </Pressable>
       </View>
 
@@ -53,7 +53,7 @@ export default function CalendarScreen() {
         <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.chips}>
           <Pressable onPress={() => setFilter(null)}
             style={[styles.chip, { backgroundColor: !filterChild ? Colors.accent : Colors.accent + '22' }]}>
-            <Text style={[styles.chipTxt, { color: !filterChild ? '#fff' : Colors.accent }]}>All</Text>
+            <Text style={[styles.chipTxt, { color: !filterChild ? '#fff' : Colors.accent }]}>הכל</Text>
           </Pressable>
           {children.map(c => (
             <Pressable key={c.id} onPress={() => setFilter(filterChild === c.id ? null : c.id)}
@@ -88,7 +88,7 @@ export default function CalendarScreen() {
 
       <ScrollView contentContainerStyle={{ paddingVertical: 8, paddingBottom: 40 }}>
         {dayEvents.length === 0 ? (
-          <EmptyState emoji="📅" title="No events" subtitle="Tap + Event to add one" />
+          <EmptyState emoji="📅" title="אין אירועים" subtitle="לחץ + אירוע להוספה" />
         ) : (
           dayEvents.map(e => <EventTile key={e.id} event={e} />)
         )}
