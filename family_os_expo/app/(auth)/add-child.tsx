@@ -3,7 +3,6 @@ import {
   View, Text, TextInput, Pressable, StyleSheet,
   ScrollView, Alert, useColorScheme,
 } from 'react-native';
-import Slider from '@react-native-community/slider';
 import { router, useLocalSearchParams } from 'expo-router';
 import { firebaseService } from '../../services/firebaseService';
 import { useAppStore } from '../../store';
@@ -95,15 +94,24 @@ export default function AddChildScreen() {
         />
       ))}
 
+      {/* Age stepper — no native dependencies */}
       <Text style={[styles.label, { color: txt }]}>Age: {age} years</Text>
-      <View style={{ marginBottom: Spacing.xl }}>
-        <Slider
-          minimumValue={3} maximumValue={18} step={1} value={age}
-          onValueChange={v => setAge(v)}
-          minimumTrackTintColor={Colors.accent}
-          maximumTrackTintColor={Colors.lightBorder}
-          thumbTintColor={Colors.accent}
-        />
+      <View style={[styles.stepper, { marginBottom: Spacing.xl }]}>
+        <Pressable
+          onPress={() => setAge(a => Math.max(3, a - 1))}
+          style={[styles.stepBtn, { backgroundColor: cardBg }]}
+        >
+          <Text style={[styles.stepTxt, { color: txt }]}>−</Text>
+        </Pressable>
+        <View style={[styles.stepValue, { backgroundColor: cardBg }]}>
+          <Text style={[styles.stepNum, { color: Colors.accent }]}>{age}</Text>
+        </View>
+        <Pressable
+          onPress={() => setAge(a => Math.min(18, a + 1))}
+          style={[styles.stepBtn, { backgroundColor: cardBg }]}
+        >
+          <Text style={[styles.stepTxt, { color: txt }]}>+</Text>
+        </Pressable>
       </View>
 
       <Pressable onPress={save} disabled={loading} style={[styles.btn, loading && { opacity: 0.6 }]}>
@@ -137,7 +145,18 @@ const styles = StyleSheet.create({
     borderRadius: Radius.md, padding: 14, fontSize: FontSize.base,
     borderWidth: 1, borderColor: Colors.lightBorder, marginBottom: Spacing.md,
   },
-  label: { fontSize: FontSize.md, fontWeight: '600', marginBottom: 4 },
+  label: { fontSize: FontSize.md, fontWeight: '600', marginBottom: 8 },
+  stepper: { flexDirection: 'row', alignItems: 'center', gap: 0 },
+  stepBtn: {
+    width: 52, height: 52, alignItems: 'center', justifyContent: 'center',
+    borderRadius: 12, borderWidth: 1, borderColor: Colors.lightBorder,
+  },
+  stepTxt: { fontSize: 24, fontWeight: '300', lineHeight: 28 },
+  stepValue: {
+    flex: 1, height: 52, alignItems: 'center', justifyContent: 'center',
+    borderTopWidth: 1, borderBottomWidth: 1, borderColor: Colors.lightBorder,
+  },
+  stepNum: { fontSize: FontSize.xl, fontWeight: '700' },
   btn: {
     backgroundColor: Colors.accent, borderRadius: Radius.md,
     padding: 16, alignItems: 'center',

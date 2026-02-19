@@ -3,7 +3,7 @@
 // Project Settings → Your apps → SDK setup and configuration
 import { initializeApp, getApps } from 'firebase/app';
 import { initializeAuth, getReactNativePersistence } from 'firebase/auth';
-import { getFirestore, enableIndexedDbPersistence } from 'firebase/firestore';
+import { getFirestore } from 'firebase/firestore';
 import { getStorage } from 'firebase/storage';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
@@ -23,8 +23,7 @@ export const auth = initializeAuth(app, {
   persistence: getReactNativePersistence(AsyncStorage),
 });
 
-export const db = getFirestore(app);
+export const db      = getFirestore(app);
 export const storage = getStorage(app);
-
-// Enable offline persistence
-enableIndexedDbPersistence(db).catch(() => {});
+// Note: React Native Firestore uses its own persistence layer automatically.
+// enableIndexedDbPersistence is web-only and must not be called here.
