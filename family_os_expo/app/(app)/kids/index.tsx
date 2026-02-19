@@ -1,12 +1,11 @@
 import React from 'react';
-import { View, Text, StyleSheet, FlatList, Pressable, useColorScheme, Alert } from 'react-native';
+import { View, Text, StyleSheet, FlatList, Pressable, useColorScheme, Share } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { router } from 'expo-router';
 import { useChildrenStore, useFamilyStore } from '../../../store';
 import { Colors, FontSize, Spacing, Radius, cardShadow } from '../../../utils/theme';
 import { hexToRgba } from '../../../utils/helpers';
 import EmptyState from '../../../components/EmptyState';
-import * as Clipboard from 'expo-clipboard';
 
 export default function KidsScreen() {
   const dark      = useColorScheme() === 'dark';
@@ -17,8 +16,10 @@ export default function KidsScreen() {
 
   const shareInvite = async () => {
     if (!family?.inviteCode) return;
-    await Clipboard.setStringAsync(family.inviteCode);
-    Alert.alert('Copied!', `Invite code ${family.inviteCode} copied to clipboard.`);
+    await Share.share({
+      message: `Join our family on FamilyOS! Use invite code: ${family.inviteCode}`,
+      title: 'FamilyOS Invite',
+    });
   };
 
   return (
