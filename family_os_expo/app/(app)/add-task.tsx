@@ -1,16 +1,15 @@
 import React, { useState } from 'react';
 import {
   View, Text, StyleSheet, ScrollView, TextInput, Pressable,
-  Alert, Switch, useColorScheme, Platform,
+  Alert, Switch, useColorScheme,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { router, useLocalSearchParams } from 'expo-router';
-import DateTimePicker from '@react-native-community/datetimepicker';
 import { firebaseService } from '../../services/firebaseService';
 import { useAppStore, useChildrenStore } from '../../store';
 import { PRIORITY_META, type TaskPriority } from '../../models';
 import { Colors, FontSize, Spacing, Radius } from '../../utils/theme';
-import { formatDate } from '../../utils/helpers';
+import { DateInput } from '../../components/DateInput';
 
 const PRIORITIES = Object.entries(PRIORITY_META) as [TaskPriority, typeof PRIORITY_META[TaskPriority]][];
 
@@ -36,9 +35,8 @@ export default function AddTaskScreen() {
   const [childId, setChildId]     = useState<string | undefined>(params.childId);
   const [hasAmount, setHasAmount] = useState(false);
   const [amount, setAmount]       = useState('');
-  const [items, setItems]         = useState('');  // newline-separated checklist
+  const [items, setItems]         = useState('');
   const [saving, setSaving]       = useState(false);
-  const [showDatePicker, setShowDatePicker] = useState(false);
 
   const save = async () => {
     if (!title.trim()) { Alert.alert('Missing title', 'Please enter a task title.'); return; }
@@ -72,11 +70,11 @@ export default function AddTaskScreen() {
       <ScrollView contentContainerStyle={{ paddingBottom: 60 }} keyboardShouldPersistTaps="handled">
         {/* Header */}
         <View style={styles.header}>
-          <Pressable onPress={() => router.back()} style={styles.backBtn}>
+          <Pressable onPress={() => router.back()}>
             <Text style={{ color: Colors.accent, fontSize: FontSize.base }}>Cancel</Text>
           </Pressable>
           <Text style={[styles.headerTitle, { color: txt }]}>New Task</Text>
-          <Pressable onPress={save} disabled={saving} style={styles.saveBtn}>
+          <Pressable onPress={save} disabled={saving}>
             <Text style={{ color: saving ? muted : Colors.accent, fontWeight: '700', fontSize: FontSize.base }}>
               {saving ? 'Saving…' : 'Save'}
             </Text>
@@ -122,32 +120,14 @@ export default function AddTaskScreen() {
         <View style={[styles.card, { backgroundColor: cardBg }]}>
           <View style={[styles.switchRow, { borderBottomColor: border, borderBottomWidth: hasDue ? 0.5 : 0 }]}>
             <Text style={[styles.switchLabel, { color: txt }]}>Set due date</Text>
-            <Switch
-              value={hasDue}
-              onValueChange={setHasDue}
-              trackColor={{ true: Colors.accent }}
-            />
+            <Switch value={hasDue} onValueChange={setHasDue} trackColor={{ true: Colors.accent }} />
           </View>
           {hasDue && (
-            <Pressable onPress={() => setShowDatePicker(true)} style={styles.rowBtn}>
-              <Text style={[styles.rowLabel, { color: txt }]}>Due</Text>
-              <Text style={[styles.rowValue, { color: Colors.accent }]}>{formatDate(dueDate)}</Text>
-            </Pressable>
+            <View style={{ padding: 12 }}>
+              <DateInput value={dueDate} onChange={setDueDate} mode="date" label="Due date" />
+            </View>
           )}
         </View>
-
-        {showDatePicker && (
-          <DateTimePicker
-            value={dueDate}
-            mode="date"
-            display={Platform.OS === 'ios' ? 'spinner' : 'default'}
-            minimumDate={new Date()}
-            onChange={(_, d) => {
-              setShowDatePicker(Platform.OS === 'android' ? false : showDatePicker);
-              if (d) setDueDate(d);
-            }}
-          />
-        )}
 
         {/* Child */}
         {children.length > 0 && (
@@ -168,8 +148,9 @@ export default function AddTaskScreen() {
                     onPress={() => setChildId(c.id)}
                     style={[
                       styles.childChip,
-                      childId === c.id && { backgroundColor: c.colorHex + '22', borderColor: c.colorHex },
-                      childId !== c.id && { borderColor: border },
+                      childId === c.id
+                        ? { backgroundColor: c.colorHex + '22', borderColor: c.colorHex }
+                        : { borderColor: border },
                     ]}
                   >
                     <Text style={{ fontSize: 16 }}>{c.emoji}</Text>
@@ -234,8 +215,6 @@ const styles = StyleSheet.create({
     flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between',
     paddingHorizontal: Spacing.lg, paddingVertical: 12,
   },
-  backBtn:  { minWidth: 60 },
-  saveBtn:  { minWidth: 60, alignItems: 'flex-end' },
   headerTitle: { fontSize: FontSize.lg, fontWeight: '700' },
 
   card: { marginHorizontal: Spacing.lg, borderRadius: Radius.lg, marginBottom: Spacing.md, overflow: 'hidden' },
@@ -256,10 +235,6 @@ const styles = StyleSheet.create({
 
   switchRow:  { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', padding: 14 },
   switchLabel: { fontSize: FontSize.md, fontWeight: '500' },
-
-  rowBtn:  { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', padding: 14 },
-  rowLabel: { fontSize: FontSize.md, fontWeight: '500' },
-  rowValue: { fontSize: FontSize.md, fontWeight: '600' },
 
   childChip: {
     flexDirection: 'row', alignItems: 'center', gap: 6,

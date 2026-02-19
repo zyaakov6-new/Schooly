@@ -1,16 +1,15 @@
 import React, { useState } from 'react';
 import {
   View, Text, StyleSheet, ScrollView, TextInput, Pressable,
-  Alert, useColorScheme, Platform,
+  Alert, useColorScheme,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { router, useLocalSearchParams } from 'expo-router';
-import DateTimePicker from '@react-native-community/datetimepicker';
 import { firebaseService } from '../../services/firebaseService';
 import { useAppStore, useChildrenStore } from '../../store';
 import { EVENT_META, type EventType } from '../../models';
 import { Colors, FontSize, Spacing, Radius } from '../../utils/theme';
-import { formatDate, formatTime } from '../../utils/helpers';
+import { DateInput } from '../../components/DateInput';
 
 const EVENT_TYPES = Object.entries(EVENT_META) as [EventType, typeof EVENT_META[EventType]][];
 
@@ -29,26 +28,20 @@ export default function AddEventScreen() {
   const params   = useLocalSearchParams<{ date?: string }>();
   const initDate = params.date ? new Date(params.date) : new Date();
 
-  const [title, setTitle]           = useState('');
-  const [type, setType]             = useState<EventType>('school');
-  const [startDate, setStartDate]   = useState(initDate);
-  const [hasTime, setHasTime]       = useState(false);
-  const [hasEnd, setHasEnd]         = useState(false);
-  const [endDate, setEndDate]       = useState<Date>(initDate);
-  const [childId, setChildId]       = useState<string | undefined>(undefined);
-  const [location, setLocation]     = useState('');
-  const [notes, setNotes]           = useState('');
-  const [amount, setAmount]         = useState('');
-  const [saving, setSaving]         = useState(false);
-
-  // Date/time picker state
-  const [showDatePicker, setShowDatePicker] = useState(false);
-  const [showTimePicker, setShowTimePicker] = useState(false);
-  const [showEndPicker, setShowEndPicker]   = useState(false);
+  const [title, setTitle]         = useState('');
+  const [type, setType]           = useState<EventType>('school');
+  const [startDate, setStartDate] = useState(initDate);
+  const [hasEnd, setHasEnd]       = useState(false);
+  const [endDate, setEndDate]     = useState<Date>(initDate);
+  const [childId, setChildId]     = useState<string | undefined>(undefined);
+  const [location, setLocation]   = useState('');
+  const [notes, setNotes]         = useState('');
+  const [amount, setAmount]       = useState('');
+  const [saving, setSaving]       = useState(false);
 
   const save = async () => {
     if (!title.trim()) { Alert.alert('Missing title', 'Please enter an event title.'); return; }
-    if (!familyId) { Alert.alert('Error', 'No family found.'); return; }
+    if (!familyId)     { Alert.alert('Error', 'No family found.'); return; }
     setSaving(true);
     try {
       await firebaseService.addEvent(familyId, {
@@ -77,11 +70,11 @@ export default function AddEventScreen() {
       <ScrollView contentContainerStyle={{ paddingBottom: 60 }} keyboardShouldPersistTaps="handled">
         {/* Header */}
         <View style={styles.header}>
-          <Pressable onPress={() => router.back()} style={styles.backBtn}>
+          <Pressable onPress={() => router.back()}>
             <Text style={{ color: Colors.accent, fontSize: FontSize.base }}>Cancel</Text>
           </Pressable>
           <Text style={[styles.headerTitle, { color: txt }]}>New Event</Text>
-          <Pressable onPress={save} disabled={saving} style={styles.saveBtn}>
+          <Pressable onPress={save} disabled={saving}>
             <Text style={{ color: saving ? muted : Colors.accent, fontWeight: '700', fontSize: FontSize.base }}>
               {saving ? 'Saving…' : 'Save'}
             </Text>
@@ -103,13 +96,19 @@ export default function AddEventScreen() {
 
         {/* Type picker */}
         <SectionLabel label="TYPE" muted={muted} />
-        <ScrollView horizontal showsHorizontalScrollIndicator={false} style={{ marginHorizontal: Spacing.lg, marginBottom: Spacing.md }}>
+        <ScrollView horizontal showsHorizontalScrollIndicator={false}
+          style={{ marginHorizontal: Spacing.lg, marginBottom: Spacing.md }}>
           <View style={{ flexDirection: 'row', gap: 8 }}>
             {EVENT_TYPES.map(([key, meta]) => (
               <Pressable
                 key={key}
                 onPress={() => setType(key)}
-                style={[styles.typeChip, type === key && { backgroundColor: meta.color + '33', borderColor: meta.color }]}
+                style={[
+                  styles.typeChip,
+                  type === key
+                    ? { backgroundColor: meta.color + '33', borderColor: meta.color }
+                    : { borderColor: border },
+                ]}
               >
                 <Text style={{ fontSize: 16 }}>{meta.emoji}</Text>
                 <Text style={[styles.typeLabel, { color: type === key ? meta.color : muted }]}>{meta.label}</Text>
@@ -119,67 +118,37 @@ export default function AddEventScreen() {
         </ScrollView>
 
         {/* Date & Time */}
-        <SectionLabel label="DATE & TIME" muted={muted} />
-        <View style={[styles.card, { backgroundColor: cardBg }]}>
-          <RowButton
-            label="Date"
-            value={formatDate(startDate)}
-            onPress={() => setShowDatePicker(true)}
-            txt={txt} muted={muted} border={border}
-          />
-          <RowButton
-            label="Time"
-            value={hasTime ? formatTime(startDate) : 'None'}
-            onPress={() => { setHasTime(true); setShowTimePicker(true); }}
-            txt={txt} muted={muted} border={border}
-          />
-          <RowButton
-            label="End time"
-            value={hasEnd ? formatTime(endDate) : 'None'}
-            onPress={() => { setHasEnd(true); setShowEndPicker(true); }}
-            txt={txt} muted={muted}
-          />
+        <SectionLabel label="START" muted={muted} />
+        <View style={{ marginHorizontal: Spacing.lg, marginBottom: Spacing.md }}>
+          <DateInput value={startDate} onChange={setStartDate} mode="datetime" label="Start date & time" />
         </View>
 
-        {showDatePicker && (
-          <DateTimePicker
-            value={startDate}
-            mode="date"
-            display={Platform.OS === 'ios' ? 'spinner' : 'default'}
-            onChange={(_, d) => {
-              setShowDatePicker(Platform.OS === 'android' ? false : showDatePicker);
-              if (d) setStartDate(prev => new Date(d.getFullYear(), d.getMonth(), d.getDate(), prev.getHours(), prev.getMinutes()));
-            }}
-          />
-        )}
-        {showTimePicker && (
-          <DateTimePicker
-            value={startDate}
-            mode="time"
-            display={Platform.OS === 'ios' ? 'spinner' : 'default'}
-            onChange={(_, d) => {
-              setShowTimePicker(Platform.OS === 'android' ? false : showTimePicker);
-              if (d) setStartDate(prev => new Date(prev.getFullYear(), prev.getMonth(), prev.getDate(), d.getHours(), d.getMinutes()));
-            }}
-          />
-        )}
-        {showEndPicker && (
-          <DateTimePicker
-            value={endDate}
-            mode="time"
-            display={Platform.OS === 'ios' ? 'spinner' : 'default'}
-            onChange={(_, d) => {
-              setShowEndPicker(Platform.OS === 'android' ? false : showEndPicker);
-              if (d) setEndDate(new Date(startDate.getFullYear(), startDate.getMonth(), startDate.getDate(), d.getHours(), d.getMinutes()));
-            }}
-          />
+        <SectionLabel label="END TIME (OPTIONAL)" muted={muted} />
+        <View style={{ marginHorizontal: Spacing.lg, marginBottom: Spacing.md, flexDirection: 'row', gap: 8 }}>
+          <Pressable
+            onPress={() => setHasEnd(v => !v)}
+            style={[
+              styles.toggleBtn,
+              hasEnd ? { backgroundColor: Colors.accent + '22', borderColor: Colors.accent } : { borderColor: border },
+            ]}
+          >
+            <Text style={{ color: hasEnd ? Colors.accent : muted, fontWeight: '600' }}>
+              {hasEnd ? '✓ Has end time' : 'No end time'}
+            </Text>
+          </Pressable>
+        </View>
+        {hasEnd && (
+          <View style={{ marginHorizontal: Spacing.lg, marginBottom: Spacing.md }}>
+            <DateInput value={endDate} onChange={setEndDate} mode="time" label="End time" />
+          </View>
         )}
 
         {/* Child */}
         {children.length > 0 && (
           <>
             <SectionLabel label="CHILD" muted={muted} />
-            <ScrollView horizontal showsHorizontalScrollIndicator={false} style={{ marginHorizontal: Spacing.lg, marginBottom: Spacing.md }}>
+            <ScrollView horizontal showsHorizontalScrollIndicator={false}
+              style={{ marginHorizontal: Spacing.lg, marginBottom: Spacing.md }}>
               <View style={{ flexDirection: 'row', gap: 8 }}>
                 <Pressable
                   onPress={() => setChildId(undefined)}
@@ -191,7 +160,12 @@ export default function AddEventScreen() {
                   <Pressable
                     key={c.id}
                     onPress={() => setChildId(c.id)}
-                    style={[styles.childChip, childId === c.id && { backgroundColor: c.colorHex + '22', borderColor: c.colorHex }]}
+                    style={[
+                      styles.childChip,
+                      childId === c.id
+                        ? { backgroundColor: c.colorHex + '22', borderColor: c.colorHex }
+                        : { borderColor: border },
+                    ]}
                   >
                     <Text style={{ fontSize: 16 }}>{c.emoji}</Text>
                     <Text style={[styles.childChipTxt, { color: childId === c.id ? c.colorHex : muted }]}>{c.name}</Text>
@@ -241,22 +215,7 @@ export default function AddEventScreen() {
 }
 
 function SectionLabel({ label, muted }: { label: string; muted: string }) {
-  return (
-    <Text style={[styles.sectionLabel, { color: muted }]}>{label}</Text>
-  );
-}
-
-function RowButton({ label, value, onPress, txt, muted, border }:
-  { label: string; value: string; onPress: () => void; txt: string; muted: string; border?: string }) {
-  return (
-    <Pressable
-      onPress={onPress}
-      style={[styles.rowBtn, border ? { borderBottomColor: border, borderBottomWidth: 0.5 } : {}]}
-    >
-      <Text style={[styles.rowLabel, { color: txt }]}>{label}</Text>
-      <Text style={[styles.rowValue, { color: Colors.accent }]}>{value}</Text>
-    </Pressable>
-  );
+  return <Text style={[styles.sectionLabel, { color: muted }]}>{label}</Text>;
 }
 
 const styles = StyleSheet.create({
@@ -264,8 +223,6 @@ const styles = StyleSheet.create({
     flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between',
     paddingHorizontal: Spacing.lg, paddingVertical: 12,
   },
-  backBtn:  { minWidth: 60 },
-  saveBtn:  { minWidth: 60, alignItems: 'flex-end' },
   headerTitle: { fontSize: FontSize.lg, fontWeight: '700' },
 
   card: { marginHorizontal: Spacing.lg, borderRadius: Radius.lg, marginBottom: Spacing.md, overflow: 'hidden' },
@@ -278,21 +235,20 @@ const styles = StyleSheet.create({
   typeChip: {
     flexDirection: 'row', alignItems: 'center', gap: 6,
     paddingHorizontal: 14, paddingVertical: 8, borderRadius: Radius.full,
-    borderWidth: 1.5, borderColor: 'transparent', backgroundColor: '#88888822',
+    borderWidth: 1.5, backgroundColor: '#88888811',
   },
-  typeLabel:  { fontSize: FontSize.sm, fontWeight: '600' },
+  typeLabel: { fontSize: FontSize.sm, fontWeight: '600' },
+
+  toggleBtn: {
+    paddingHorizontal: 16, paddingVertical: 10, borderRadius: Radius.full, borderWidth: 1.5,
+  },
 
   childChip: {
     flexDirection: 'row', alignItems: 'center', gap: 6,
-    paddingHorizontal: 14, paddingVertical: 8, borderRadius: Radius.full,
-    borderWidth: 1.5, backgroundColor: '#88888822',
+    paddingHorizontal: 14, paddingVertical: 8, borderRadius: Radius.full, borderWidth: 1.5,
   },
   childChipActive: { borderColor: Colors.accent, backgroundColor: Colors.accent + '22' },
   childChipTxt: { fontSize: FontSize.sm, fontWeight: '600' },
-
-  rowBtn: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', padding: 14 },
-  rowLabel: { fontSize: FontSize.md, fontWeight: '500' },
-  rowValue: { fontSize: FontSize.md, fontWeight: '600' },
 
   fieldInput: { padding: 14, fontSize: FontSize.md, borderBottomWidth: 0.5 },
   notesInput: { minHeight: 80 },
