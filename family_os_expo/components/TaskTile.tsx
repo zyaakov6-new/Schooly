@@ -1,11 +1,11 @@
 import React, { useRef } from 'react';
 import {
-  View, Text, StyleSheet, Pressable, Animated,
+  View, Text, StyleSheet, Pressable,
   useColorScheme,
 } from 'react-native';
 import { Swipeable } from 'react-native-gesture-handler';
 import { type FamilyTask, PRIORITY_META, isTaskOverdue } from '../models';
-import { Colors, Radius, FontSize, Spacing } from '../utils/theme';
+import { Colors, Radius, FontSize, Spacing, cardShadow } from '../utils/theme';
 import { formatRelative, formatAmount, haptic } from '../utils/helpers';
 import { firebaseService } from '../services/firebaseService';
 import { useAppStore } from '../store';
@@ -16,13 +16,16 @@ interface Props {
 }
 
 export default function TaskTile({ task, onPress }: Props) {
-  const scheme   = useColorScheme();
-  const dark     = scheme === 'dark';
+  const dark     = useColorScheme() === 'dark';
   const familyId = useAppStore(s => s.familyId) ?? '';
   const swipeRef  = useRef<Swipeable>(null);
   const isOverdue = isTaskOverdue(task);
   const isDone    = task.status === 'done';
   const priority  = PRIORITY_META[task.priority];
+
+  const cardColor  = dark ? Colors.darkCard : '#FFFFFF';
+  const textColor  = dark ? Colors.darkText : Colors.lightText;
+  const mutedColor = dark ? Colors.darkMuted : Colors.lightMuted;
 
   const complete = async () => {
     swipeRef.current?.close();
@@ -42,18 +45,21 @@ export default function TaskTile({ task, onPress }: Props) {
   };
 
   const renderLeft = () => (
-    <Pressable onPress={complete} style={[styles.action, { backgroundColor: Colors.success }]}>
-      <Text style={styles.actionIcon}>✓</Text>
+    <Pressable onPress={complete} style={[styles.swipeAction, styles.completeAction]}>
+      <Text style={styles.swipeIcon}>✓</Text>
+      <Text style={styles.swipeLabel}>בוצע</Text>
     </Pressable>
   );
 
   const renderRight = () => (
     <View style={styles.rightActions}>
-      <Pressable onPress={snooze} style={[styles.action, { backgroundColor: Colors.warning }]}>
-        <Text style={styles.actionIcon}>⏰</Text>
+      <Pressable onPress={snooze} style={[styles.swipeAction, styles.snoozeAction]}>
+        <Text style={styles.swipeIcon}>⏰</Text>
+        <Text style={styles.swipeLabel}>דחה</Text>
       </Pressable>
-      <Pressable onPress={remove} style={[styles.action, { backgroundColor: Colors.error }]}>
-        <Text style={styles.actionIcon}>🗑</Text>
+      <Pressable onPress={remove} style={[styles.swipeAction, styles.deleteAction]}>
+        <Text style={styles.swipeIcon}>🗑</Text>
+        <Text style={styles.swipeLabel}>מחק</Text>
       </Pressable>
     </View>
   );
@@ -64,12 +70,23 @@ export default function TaskTile({ task, onPress }: Props) {
         onPress={onPress}
         style={[
           styles.tile,
-          { backgroundColor: dark ? Colors.darkCard : Colors.lightCard },
+          { backgroundColor: cardColor },
+          cardShadow(dark),
           isDone && styles.doneTile,
         ]}
       >
+        {/* Priority strip */}
+        <View style={[styles.priorityStrip, { backgroundColor: priority.color }]} />
+
         {/* Checkbox */}
-        <Pressable onPress={isDone ? undefined : complete} style={[styles.checkbox, isDone && styles.checkboxDone]}>
+        <Pressable
+          onPress={isDone ? undefined : complete}
+          style={[
+            styles.checkbox,
+            { borderColor: isDone ? Colors.success : priority.color },
+            isDone && { backgroundColor: Colors.success },
+          ]}
+        >
           {isDone && <Text style={styles.checkmark}>✓</Text>}
         </Pressable>
 
@@ -78,31 +95,36 @@ export default function TaskTile({ task, onPress }: Props) {
           <Text
             style={[
               styles.title,
-              { color: dark ? Colors.darkText : Colors.lightText },
+              { color: textColor },
               isDone && styles.doneText,
             ]}
             numberOfLines={2}
           >
             {task.title}
           </Text>
-          <View style={styles.meta}>
+
+          <View style={styles.metaRow}>
             {task.dueDate && (
-              <Text style={[styles.metaText, isOverdue && { color: Colors.error }]}>
-                🕐 {formatRelative(task.dueDate)}
-              </Text>
+              <View style={[styles.metaChip, isOverdue && { backgroundColor: Colors.error + '18' }]}>
+                <Text style={[styles.metaText, { color: isOverdue ? Colors.error : mutedColor }]}>
+                  {isOverdue ? '⚠️' : '📅'} {formatRelative(task.dueDate)}
+                </Text>
+              </View>
             )}
-            {task.amount && (
-              <Text style={[styles.metaText, { color: Colors.warning }]}>
-                {formatAmount(task.amount)}
-              </Text>
+            {task.amount != null && (
+              <View style={[styles.metaChip, { backgroundColor: Colors.warning + '18' }]}>
+                <Text style={[styles.metaText, { color: Colors.warning }]}>
+                  💰 {formatAmount(task.amount)}
+                </Text>
+              </View>
             )}
           </View>
         </View>
 
-        {/* Priority badge */}
+        {/* Priority badge — only for non-low */}
         {task.priority !== 'low' && (
-          <View style={[styles.badge, { backgroundColor: priority.color + '22' }]}>
-            <Text style={[styles.badgeText, { color: priority.color }]}>{priority.label}</Text>
+          <View style={[styles.priorityBadge, { backgroundColor: priority.color + '18' }]}>
+            <Text style={[styles.priorityText, { color: priority.color }]}>{priority.label}</Text>
           </View>
         )}
       </Pressable>
@@ -114,38 +136,51 @@ const styles = StyleSheet.create({
   tile: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginHorizontal: 16,
+    marginHorizontal: Spacing.lg,
     marginVertical: 4,
-    padding: 14,
-    borderRadius: Radius.lg,
+    borderRadius: Radius.xl,
+    overflow: 'hidden',
+    paddingRight: 14,
     gap: Spacing.md,
   },
-  doneTile: { opacity: 0.6 },
+  doneTile: { opacity: 0.55 },
+
+  priorityStrip: { width: 4, alignSelf: 'stretch' },
+
   checkbox: {
-    width: 28, height: 28,
-    borderRadius: 8,
-    borderWidth: 2,
-    borderColor: Colors.accent,
-    alignItems: 'center',
-    justifyContent: 'center',
+    width: 28, height: 28, borderRadius: 8,
+    borderWidth: 2, alignItems: 'center', justifyContent: 'center',
+    marginLeft: 4,
   },
-  checkboxDone: { backgroundColor: Colors.success, borderColor: Colors.success },
-  checkmark: { color: '#fff', fontSize: 14, fontWeight: '700' },
-  content: { flex: 1, gap: 4 },
-  title: { fontSize: FontSize.md, fontWeight: '600' },
-  doneText: { textDecorationLine: 'line-through' },
-  meta: { flexDirection: 'row', gap: Spacing.sm },
-  metaText: { fontSize: FontSize.sm, color: Colors.lightMuted },
-  badge: {
-    paddingHorizontal: 8, paddingVertical: 4,
-    borderRadius: 8,
+  checkmark: { color: '#fff', fontSize: 14, fontWeight: '800' },
+
+  content: { flex: 1, paddingVertical: 14, gap: 6 },
+  title: { fontSize: FontSize.md, fontWeight: '700', lineHeight: 20 },
+  doneText: { textDecorationLine: 'line-through', opacity: 0.7 },
+
+  metaRow: { flexDirection: 'row', flexWrap: 'wrap', gap: 6 },
+  metaChip: {
+    flexDirection: 'row', alignItems: 'center',
+    paddingHorizontal: 8, paddingVertical: 3, borderRadius: Radius.full,
+    backgroundColor: '#88888814',
   },
-  badgeText: { fontSize: FontSize.xs, fontWeight: '700' },
-  action: {
+  metaText: { fontSize: FontSize.xs, fontWeight: '600' },
+
+  priorityBadge: {
+    paddingHorizontal: 10, paddingVertical: 5,
+    borderRadius: Radius.full,
+  },
+  priorityText: { fontSize: FontSize.xs, fontWeight: '800' },
+
+  /* Swipe actions */
+  swipeAction: {
     justifyContent: 'center', alignItems: 'center',
-    width: 72, borderRadius: Radius.lg,
-    marginVertical: 4,
+    width: 68, marginVertical: 4, borderRadius: Radius.xl, gap: 2,
   },
-  actionIcon: { fontSize: 20 },
-  rightActions: { flexDirection: 'row', gap: 4, marginRight: 16 },
+  swipeIcon:  { fontSize: 18 },
+  swipeLabel: { fontSize: FontSize.xs, color: '#fff', fontWeight: '700' },
+  completeAction: { backgroundColor: Colors.success, marginLeft: 16 },
+  snoozeAction:   { backgroundColor: Colors.warning },
+  deleteAction:   { backgroundColor: Colors.error },
+  rightActions: { flexDirection: 'row', gap: 6, marginRight: 16 },
 });
